@@ -1,0 +1,36 @@
+
+
+@import 'variables';
+.breadcrumb{
+    background:#5A96E3;
+}
+
+.client {
+    .card-body{
+        position: relative;
+        &>div:nth-child(2){
+            background: linear-gradient(45deg,$color-bas ,$color-another);
+        }
+        .action{
+            position: absolute;
+            left: 90%;
+        }
+
+    }
+}
+
+
+.fs-12{
+    font-size: 12px !important;
+}
+.fs-13-5{
+    font-size: 13.5px !important;
+}
+
+.card{
+    .card-header{
+        .title{
+            font-size:12px;
+        }
+    }
+}

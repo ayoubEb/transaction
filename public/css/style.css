@@ -1,0 +1,30 @@
+table th {
+  font-variant-caps: all-small-caps;
+}
+
+.breadcrumb {
+  background: #5A96E3;
+}
+
+.client .card-body {
+  position: relative;
+}
+.client .card-body > div:nth-child(2) {
+  background: linear-gradient(45deg, #164B60, #1B6B93);
+}
+.client .card-body .action {
+  position: absolute;
+  left: 90%;
+}
+
+.fs-12 {
+  font-size: 12px !important;
+}
+
+.fs-13-5 {
+  font-size: 13.5px !important;
+}
+
+.card .card-header .title {
+  font-size: 12px;
+}
