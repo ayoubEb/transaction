@@ -39,20 +39,20 @@ class EntrepriseController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-          "raison_social"=>["regex:/^([a-z]|[A-Z])+$/","required"],
-          "adresse"=>["required"],
-          "ice"=>["regex:/^([0-9])+$/","required"],
-          "if"=>["regex:/^([0-9])+$/","required"],
-          "rc"=>["regex:/^([0-9])+$/","required"],
-          "patente"=>["regex:/^([0-9])+$/","required"],
-          "cnss"=>["regex:/^([0-9])+$/","required"],
-          "site"=>["required"],
-          "telephone"=>["required"],
-          "ville"=>["regex:/^([a-z]|[A-Z])+$/","required"],
-          "code_postal"=>["regex:/^([0-9])+$/","required"],
-          "email"=>["required"],
-        ]);
+        // $request->validate([
+        //   "raison_social"=>["regex:/^([a-z]|[A-Z])+$/","required"],
+        //   "adresse"=>["required"],
+        //   "ice"=>["regex:/^([0-9])+$/","required"],
+        //   "if"=>["regex:/^([0-9])+$/","required"],
+        //   "rc"=>["regex:/^([0-9])+$/","required"],
+        //   "patente"=>["regex:/^([0-9])+$/","required"],
+        //   "cnss"=>["regex:/^([0-9])+$/","required"],
+        //   "site"=>["required"],
+        //   "telephone"=>["required"],
+        //   "ville"=>["regex:/^([a-z]|[A-Z])+$/","required"],
+        //   "code_postal"=>["regex:/^([0-9])+$/","required"],
+        //   "email"=>["required"],
+        // ]);
 
         if($request->hasFile('img'))
         {
@@ -63,8 +63,8 @@ class EntrepriseController extends Controller
         }
 
         Entreprise::create([
-            "logo"=>$filename ?? "",
-            "raison_social"=>$request->raison_social,
+            "logo"=>$filename ?? "logo.jpg",
+            "raison_sociale"=>$request->raison_sociale,
             "rc"=>$request->rc,
             "ice"=>$request->ice,
             "if"=>$request->if,

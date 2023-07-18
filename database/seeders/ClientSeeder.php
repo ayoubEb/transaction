@@ -50,7 +50,7 @@ class ClientSeeder extends Seeder
                     "raison_sociale"=>"Béranger Bonnet",
                     "responsable"=>"Ambroise Morin",
                     "adresse"=>"10 Voie Vaneau - Pau",
-                    "email"=>"melchiormoulin.pierre@yahoo.fr",
+                    "email"=>"melchiormoulin.pier@yahoo.fr",
                     "ville"=>"Yémen",
                     "ice"=>"855123",
                     "if"=>"2306751123456",

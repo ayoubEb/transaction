@@ -2,11 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categorie;
 use App\Models\SousCategorie;
 use Illuminate\Http\Request;
 
 class SousCategorieController extends Controller
 {
+
+    function __construct()
+    {
+         $this->middleware('permission:sous-categorie-list|sous-categorie-create|sous-categorie-edit|sous-categorie-delete', ['only' => ['index']]);
+         $this->middleware('permission:sous-categorie-create', ['only' => ['create','store']]);
+         $this->middleware('permission:sous-categorie-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:sous-categorie-destroy', ['only' => ['destroy']]);
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +25,7 @@ class SousCategorieController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**
@@ -35,7 +46,16 @@ class SousCategorieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+            SousCategorie::create([
+                "categorie_id"=>$request->categorie,
+                "nom"=>$request->sous,
+            ]);
+
+
+        toast("L'enregistrement du sous catégories effectuée","success");
+        return back();
+
     }
 
     /**
@@ -69,7 +89,12 @@ class SousCategorieController extends Controller
      */
     public function update(Request $request, SousCategorie $sousCategorie)
     {
-        //
+        $sousCategorie->update([
+            "categorie_id"=>$request->categorie_u,
+            "nom"=>$request->sous_u,
+        ]);
+        toast("La motification du sous-catégorie effectuée","success");
+        return back();
     }
 
     /**
@@ -78,8 +103,18 @@ class SousCategorieController extends Controller
      * @param  \App\Models\SousCategorie  $sousCategorie
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SousCategorie $sousCategorie)
+    public function destroy(SousCategorie $sousCategorie,Request $request)
     {
-        //
+
+        if(isset($request->force)){
+            $sousCategorie->forceDelete();
+            toast("La suppression du sous-catégorie effectuée","success");
+        }
+        else{
+            toast("La déplacement du corbeille du sous-catégorie effectuée","success");
+            $sousCategorie->delete();
+
+        }
+        return back();
     }
 }

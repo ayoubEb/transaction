@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Caracteristique;
 use Illuminate\Http\Request;
 use App\Models\Produit;
 use App\Models\Categorie;
+use App\Models\ProduitCategorie;
+use App\Models\ProduitSousCategorie;
+use App\Models\SousCategorie;
+use App\Models\Stock;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 class ProduitController extends Controller
@@ -15,7 +20,7 @@ class ProduitController extends Controller
          $this->middleware('permission:produit-list|produit-create|produit-edit|produit-delete', ['only' => ['index','show']]);
          $this->middleware('permission:produit-create', ['only' => ['create','store']]);
          $this->middleware('permission:produit-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:produit-delete', ['only' => ['destroy']]);
+         $this->middleware('permission:produit-destroy', ['only' => ['destroy']]);
     }
       /**
        * Display a listing of the resource.
@@ -27,19 +32,19 @@ class ProduitController extends Controller
         $produits = Produit::get(
             [
                 "id",
-                "categorie_id",
                 "image",
                 "reference",
                 "designation",
                 "description",
                 "prix_vente",
                 "prix_achat",
-                "prix_unitaire",
-                "quantite"
+                "prix_revient",
+                "quantite",
+                "code"
             ]
         );
 
-        return view('produit.index',['produits'=>$produits]);
+        return view('catalogue.produit.index',['produits'=>$produits]);
       }
 
       /**
@@ -49,9 +54,21 @@ class ProduitController extends Controller
        */
       public function create()
       {
-        $categories = Categorie::get(['id','nom','description']);
-
-        return view("produit.create",["categories"=>$categories]);
+        $categories = Categorie::get(['id','nom']);
+        $sous_categories = sousCategorie::get(['id','nom']);
+        $caracteristiques = Caracteristique::get(
+            [
+                "id",
+                "nom",
+            ]
+            );
+        return view("catalogue.produit.create",
+            [
+                "categories"=>$categories,
+                "sous_categories"=>$sous_categories,
+                "caracteristiques"=>$caracteristiques
+            ]
+        );
       }
 
       /**
@@ -63,35 +80,79 @@ class ProduitController extends Controller
       public function store(Request $request)
       {
         $request->validate([
-          "reference"=>["required"],
+          "reference"=>["required","unique:produits,reference"],
           "designation"=>["required"],
           "prix_vente"=>["regex:/^([0-9](.[0-9])?)+$/"],
           "prix_achat"=>["regex:/^([0-9](.[0-9])?)+$/"],
-          "prix_unitaire"=>["regex:/^([0-9](.[0-9])?)+$/"],
-          "categorie_id"=>["required"],
+          "code"=>["nullable","unique:produits,code"],
+          "prix_revient"=>["regex:/^([0-9](.[0-9])?)+$/"],
+
         ]);
 
-        $img_produit = "";
-            if($request->hasFile("img")){
-            $destination_path_produit = 'public/img/produits';
+
+
+        if($request->hasFile("img")){
+            $destination_path = 'public/images/produits/';
             $image_produit = $request->file("img");
-            $img_produit = $image_produit->getClientOriginalName();
-            $request->file("img")->storeAs($destination_path_produit,$img_produit);
+            $filename = $image_produit->getClientOriginalName();
+            $request->file("img")->storeAs($destination_path,$filename);
+            $resu = $filename;
+
         }
 
 
-        Produit::create([
-            "categorie_id"=>$request->categorie_id,
-            "image"=>$img_produit ?? "",
+
+
+        $produit = Produit::create([
+            "image"=>$resu ?? "",
             "reference"=>$request->reference,
             "designation"=>Str::upper($request->designation),
             "description"=>$request->description,
             "prix_vente"=>$request->prix_vente,
             "prix_achat"=>$request->prix_achat,
-            "prix_unitaire"=>$request->prix_unitaire,
-            "quantite"=>$request->quantite ?? 1,
+            "prix_revient"=>$request->prix_revient,
+            "quantite"=>0,
+            "code"=>Str::upper($request->code),
         ]);
+        if(isset($request->sous))
+        {
+            foreach($request->sous as $k => $row){
+                SousCategorie::where("id",$row)->first();
+                ProduitSousCategorie::create([
+                    "sous_categorie_id"=>$row,
+                    "produit_id"=>$produit->id,
 
+                ]);
+
+            }
+
+        }
+
+        if(isset($request->categorie)){
+
+            foreach($request->categorie as $k => $row){
+
+                ProduitCategorie::create([
+                    "produit_id"=>$produit->id,
+                    "categorie_id"=>$row,
+                ]);
+            }
+        }
+
+
+        foreach($request->valeur as $k => $row){
+            if($request->valeur[$k] != ''){
+                $produit->caracteristiques()->create([
+                    "produit_id"=>$produit->id,
+                    "caracteristique_id"=>$request->caracteristique_id[$k],
+                    "valeur"=>$row,
+                    "quantite"=>$request->quantite_caracteristique[$k],
+                    "prix"=>$request->prix_caracteristique[$k],
+                ]);
+
+            }
+        }
+        toast("L'enregistrement du produit effectuée","success");
         return redirect()->route('produit.index');
       }
 
@@ -115,7 +176,21 @@ class ProduitController extends Controller
       public function edit(Produit $produit)
       {
         $categories = Categorie::select('id','nom')->get();
-        return view("produit.edit",["produit"=>$produit,"categories"=>$categories]);
+        $sous_categories = SousCategorie::select('id','nom')->get();
+
+        $caracteristiques = Caracteristique::get(
+            [
+                "id",
+                "nom",
+            ]
+        );
+        return view("catalogue.produit.edit",
+            [
+                "produit"=>$produit,
+                "categories"=>$categories,
+                "sous_categories"=>$sous_categories,
+                "caracteristiques"=>$caracteristiques,
+            ]);
       }
 
       /**
@@ -132,8 +207,6 @@ class ProduitController extends Controller
           "designation"=>["required"],
           "prix_vente"=>["regex:/^([0-9](.[0-9])?)+$/"],
           "prix_achat"=>["regex:/^([0-9](.[0-9])?)+$/"],
-          "prix_unitaire"=>["regex:/^([0-9](.[0-9])?)+$/"],
-          "categorie_id"=>["required"],
         ]);
 
         if (File::exists(storage_path().'/app/public/images/produits/'.$produit->image)) {
@@ -141,26 +214,30 @@ class ProduitController extends Controller
           }
         $img_produit = "";
             if($request->hasFile("img")){
-            $destination_path_produit = 'public/img/produits';
+            $destination_path_produit = 'public/images/produits';
             $image_produit = $request->file("img");
             $img_produit = $image_produit->getClientOriginalName();
             $request->file("img")->storeAs($destination_path_produit,$img_produit);
         }
 
             $produit->update([
-              "categorie_id"=>$request->categorie_id,
+
               "image"=>$img_produit ?? "",
               "reference"=>Str::upper($request->reference),
               "designation"=>Str::upper($request->designation),
               "description"=>$request->description,
               "prix_vente"=>$request->prix_vente,
               "prix_achat"=>$request->prix_achat,
-              "prix_unitaire"=>$request->prix_unitaire,
-              "quantite"=>$request->quantite ?? 1,
+              "code"=>$request->prix_revient,
+              "prix_revient"=>$request->code,
             ]);
 
-
-        return redirect()->back();
+            $stock =  Stock::where("produit_id",$produit->id)->first();
+            // Stock::where("produit_id",$produit->id)->update([
+            //     "entre"=>$stock->entre
+            // ]);
+            toast("La motification du produit effectuée","success");
+            return back();
       }
 
       /**
@@ -169,12 +246,24 @@ class ProduitController extends Controller
        * @param  \App\Models\Produit  $produit
        * @return \Illuminate\Http\Response
        */
-      public function destroy(Produit $produit)
+      public function destroy(Produit $produit,Request $request)
       {
+        if(isset($request->force)){
+            $produit->forceDelete();
+            $produit->categories()->forceDelete();
+            $produit->sous_categories()->forceDelete();
+            if (File::exists(storage_path().'/app/public/images/produits/'.$produit->image)) {
+                File::delete(storage_path().'/app/public/images/produits/'.$produit->image);
+            }
+            toast("La suppression du produit effectuée","success");
+        }
+        else{
+            $produit->delete();
+            $produit->categories()->delete();
+            $produit->sous_categories()->delete();
+            $produit->delete();
+            toast("La déplacement du corbeille du produit effectuée","success");
 
-        $produit->delete();
-        if (File::exists(storage_path().'/app/public/images/produits/'.$produit->image)) {
-        File::delete(storage_path().'/app/public/images/produits/'.$produit->image);
         }
         return back();
       }

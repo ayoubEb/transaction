@@ -23,7 +23,7 @@
     <meta name="theme-color" content="#ffffff">
   @include('layouts.vendor-css')
 </head>
-<body data-sidebar="light">
+<body data-sidebar="dark">
 	<div class="main-wrapper">
 
 		<!-- partial:partials/_sidebar.html -->

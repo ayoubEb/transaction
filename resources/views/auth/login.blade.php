@@ -3,9 +3,9 @@
 @section('content')
 
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-lg-7">
                 <div class="card w-100">
-                    <div class="card-body p-5">
+                    <div class="card-body p-4">
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
                             <div class="row justify-content-center mb-3">

@@ -1,24 +1,21 @@
 @extends('layouts.master')
+@section('title')
+    Liste des authorisation
+@endsection
 @section('content')
 
-<div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
-    <div>
-      <h4 class="mb-3 mb-md-0">Liste du roles</h4>
-    </div>
-    <div class="d-flex align-items-center flex-wrap text-nowrap">
-        @can("role-create")
-            <a href="{{ route('role.create') }}" class="btn btn-primary btn-icon-text mb-2 mb-md-0 py-1 px-3">
-                Ajouter
-            </a>
-        @endcan
-    </div>
-</div>
 
 <div class="card">
     <div class="card-body p-2">
-
+        <div class="d-flex justify-content-center mb-3">
+            @can("role-create")
+                <a href="{{ route('role.create') }}" class="btn btn-primary btn-sm">
+                    Ajouter
+                </a>
+            @endcan
+        </div>
         <div class="table-responsive">
-            <table class="table table-bordered table-sm m-0">
+            <table class="table table-bordered table-sm m-0 datatable">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -32,11 +29,16 @@
                             <td class="align-middle">{{ $role->name }}</td>
                             <td class="align-middle">
                                 @can('role-edit')
-                                <a class="btn text-primary bg-transaprent p-0" href="{{ route('role.edit',$role->id) }}">
-                                    <i class="ti-pencil" style="font-size: 0.90rem"></i>
-                                </a>
+                                    <a class="btn text-primary bg-transaprent p-0" href="{{ route('role.edit',$role->id) }}">
+                                        <i class="ti-pencil" style="font-size: 0.90rem"></i>
+                                    </a>
                                 @endcan
-                                @can('role-delete')
+                                @can('role-show')
+                                    <a class="btn text-primary bg-transaprent p-0" href="{{ route('role.show',$role->id) }}">
+                                        <i class="ti-eye" style="font-size: 0.90rem"></i>
+                                    </a>
+                                @endcan
+                                @can('role-destroy')
                                     <button type="button" class="btn text-primary bg-transaprent p-0" data-bs-toggle="modal" data-bs-target="#delete{{ $role->id }}">
                                         <i class="mdi mdi-trash-can"></i>
                                     </button>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\Facture;
 use App\Models\FacturePaiement;
+use App\Models\FacturePaiementCheque;
 use App\Models\FactureReglement;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -39,21 +40,31 @@ class FacturePaiementController extends Controller
      */
     public function store(Request $request)
     {
-        $facture = Facture::where('id',$request->facture_id)->first();
-        $ht = $facture->payer + $request->payer;
-        FacturePaiement::create([
-            "facture_id"=>$request->facture_id,
-            "type_paiement"=>$request->type,
+        $facture = Facture::where("id",$request->facture_id)->first();
+        $facture_paiement = FacturePaiement::create([
+            "facture_id"=>$facture->id,
+            "client_id"=>$facture->client->id,
             "payer"=>$request->payer,
             "reste"=>$request->reste,
-            "date_paiement"=>Carbon::today(),
+            "type_paiement"=>$request->type,
+            "date_paiement"=>Carbon::now(),
+        ]);
+        if($request->type == "cheque"){
+            FacturePaiementCheque::create([
+                "facture_paiement_id"=>$facture_paiement->id,
+                "numero"=>$request->numero,
+                "bank_id"=>$request->nom_bank,
+                "date_enquisement"=>$request->date_enquisement,
+            ]);
+        }
 
-        ]);
+        $sum_payer = FacturePaiement::where("facture_id",$facture->id)->sum("payer");
+
         $facture->update([
-            "payer"=>$facture->payer + $request->payer,
-            "reste"=>$facture->reste - $ht,
+            "payer"=>$sum_payer,
+            "reste"=>$request->reste,
         ]);
-        toast("l'enregistrement du facture paiement effectuée","success");
+        toast("L'enregistrement du paiement effectuée","success");
         return back();
     }
 
@@ -97,40 +108,22 @@ class FacturePaiementController extends Controller
      * @param  \App\Models\FacturePaiement  $facturePaiement
      * @return \Illuminate\Http\Response
      */
-    public function destroy(FacturePaiement $facturePaiement)
+    public function destroy(FacturePaiement $facture_paiement)
     {
-        //
+        $facture = Facture::where("id",$facture_paiement->facture->id)->first();
+
+        $facture->update([
+            "reste"=>$facture->reste + $facture_paiement->payer,
+            "payer"=>$facture->payer - $facture_paiement->payer,
+        ]);
+        $facture_paiement->delete();
+        toast("La suppression du paiement effectuée","success");
+        return back();
     }
 
 
-    public function facture_paiement(Request $request)
-    {
-        $facture_paiements = FacturePaiement::all();
-        $paiement = $request->facture_paiement;
-        $min_reste = FactureReglement::where("facture_paiement_id",$paiement)->min("montant_reste");
-        return view("apps.paiements.facture",["facture_paiements"=>$facture_paiements,"min_reste"=>$min_reste]);
-    }
-    public function client_paiement()
-    {
 
-        $client_paiments =Client::join("factures","clients.id","=","factures.client_id")
-        ->join("facture_paiements","factures.id","=","facture_paiements.facture_id")
-        ->select("clients.ice","clients.raison_sociale","clients.id as cli","clients.email","factures.*","facture_paiements.*")
-        ->groupBy("factures.client_id")
-        // ->selectRaw("SUM(factures.prix_ttc) as sum_ttc")
-        ->selectRaw("SUM(factures.prix_ht) as sum_ht")
-        ->selectRaw("SUM(factures.prix_ttc) as sum_ttc")
-        ->selectRaw("SUM(facture_paiements.payer) as sum_payer")
-        ->selectRaw("SUM(facture_paiements.reste) as sum_reste")
-        ->get();
 
-        return view("apps.paiements.client",["client_paiements"=>$client_paiments]);
-    }
-    public function cp_details($client)
-    {
-        $cli = Client::where("id",$client)->first();
-        return view("apps.paiements.client-info",["client"=>$cli]);
-    }
 
 
 

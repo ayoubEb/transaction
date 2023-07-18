@@ -10,18 +10,17 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
+    function __construct()
+    {
+         $this->middleware('permission:user-list|user-create|user-edit|user-destroy', ['only' => ['index']]);
+         $this->middleware('permission:user-create', ['only' => ['store']]);
+         $this->middleware('permission:user-edit', ['only' => ['update']]);
+         $this->middleware('permission:user-destroy', ['only' => ['destroy']]);
+    }
     public function index(){
       return view("users",['users'=> User::all(),"roles"=>Role::pluck('name','name')->all()]);
     }
-    public function destroy(User $user){
-      $user->delete();
-      Session()->flash("delete","La suppression d'entreprise effectuée");
-      return redirect()->back();
-    }
+
 
     public function create(){
 
@@ -32,7 +31,7 @@ class UserController extends Controller
         'email'=>['required'],
         'password'=>['min:8','confirmed'],
         "roles"=>["required"],
-        "statut"=>["required"],
+
       ]);
 
     //   if($request->hasFile('img'))
@@ -43,18 +42,24 @@ class UserController extends Controller
     //     $file->move('images/users/',$filename);
     //     $new_user->image=$filename;
     //   }
+    if(!empty($request->name) ||!empty($request->email) || !empty($request->password) || !empty($request->roles)){
         $user = User::create([
             "image"=>"user.jpg",
             "name"=>$request->name,
+            "username"=>$request->username,
             "email"=>$request->email,
-            "statut"=>$request->statut,
-            "role"=>"user",
+            "statut"=>"activer",
+            "role"=>$request->fonction ?? "user",
             "password"=>Hash::make($request->password),
 
         ]);
         $user->assignRole($request->input('roles'));
-        Session()->flash("success","L'enregistrement d'utilisateur effectuée");
+        toast("L'enregistrement d'utilisateur effectuée","success");
+    }
+    else{
+        toast("Remplir en tous les champs obligatoire","success");
 
+    }
         return back();
 
     }
@@ -75,7 +80,7 @@ class UserController extends Controller
       $request->validate([
         'name_u'=>['required'],
         'email_u'=>['required'],
-        "statut_u"=>["required"],
+        'username_u'=>['required'],
         'roles_u' => ['required'],
 
       ]);
@@ -85,9 +90,10 @@ class UserController extends Controller
       }
       $user->update([
         "name"=>$request->name_u,
-        "role"=>"user",
+        "username"=>$request->username_u,
+        "role"=>$request->fonction_u ?? "user",
         "email"=>$request->email_u,
-        "statut"=>$request->statut_u,
+        // "statut"=>$request->statut_u,
         "password"=>$request->password_u ?? "",
       ]);
 
@@ -103,8 +109,22 @@ class UserController extends Controller
 
           DB::table('model_has_roles')->where('model_id',$user->id)->delete();
         $user->assignRole($request->input('roles_u'));
-          Session()->flash("update","La notification d'utilisateur effectuée");
+        toast("La motification d'utilisateur effectuée","success");
         return redirect()->back();
 
+  }
+
+  public function destroy(User $user,Request $request){
+    if(isset($request->force))
+    {
+        $user->forceDelete();
+        toast("La suppression d'utilisateur effectuée","success");
+    }
+    else
+    {
+        $user->delete();
+        toast("La déplacement du corbeille d'utilisateur effectuée","success");
+    }
+    return back();
   }
 }

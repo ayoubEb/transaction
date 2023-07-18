@@ -11,10 +11,10 @@ class ClientController extends Controller
 {
     function __construct()
     {
-         $this->middleware('permission:client-list|client-create|client-edit|client-delete', ['only' => ['index','show']]);
+         $this->middleware('permission:client-list|client-create|client-edit|client-destroy', ['only' => ['index','show']]);
          $this->middleware('permission:client-create', ['only' => ['create','store']]);
          $this->middleware('permission:client-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:client-delete', ['only' => ['destroy']]);
+         $this->middleware('permission:client-destroy', ['only' => ['destroy']]);
     }
 
     /**
@@ -31,6 +31,7 @@ class ClientController extends Controller
                 "raison_sociale",
                 "responsable",
                 "adresse",
+                "telephone",
                 "email",
                 "ville",
                 "ice",
@@ -176,27 +177,24 @@ class ClientController extends Controller
      * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Client $client)
+    public function destroy(Client $client,Request $request)
     {
-   $client->delete();
-      Session()->flash('delete','La suppression du client effectuée');
-      return redirect()->route('client.index');
+
+        if(isset($request->force)){
+            $client->forceDelete();
+            toast("La suppression du client effectuée","success");
+        }
+        else{
+            $client->delete();
+            toast("La déplacement du corbeille du client effectuée","success");
+
+        }
+
+        return back();
+
+
 
     }
 
-    // public function destroyAll(Request $request){
 
-    //   $idClients = $request->client_id;
-
-    //   foreach($idClients as $idClient){
-    //      $Client= Client::where('id' ,$idClient)->first();
-    //     $Client->delete();
-
-    //   }
-    //   Session()->flash('delete','La suppression du client effectuée');
-    //   return redirect()->back();
-
-
-
-    // }
 }

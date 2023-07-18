@@ -2,6 +2,7 @@
 @section('content')
 <div class="d-flex justify-content-between mt-3 mb-2">
     <h5 class="m-0">Liste des transactions</h5>
+    
     @can('transaction-create')
         <button  class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#nouveau">Nouveau</button>
     @endcan

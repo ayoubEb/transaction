@@ -9,7 +9,7 @@ class Entreprise extends Model
 {
     use HasFactory;
     protected $table='entreprises';
-    protected $fillable=["logo","raison_social","rc","ice","if","patente","site","cnss","adresse","ville","email","code_postal","telephone","fix"];
+    protected $guarded = [];
     public function getRouteKeyName()
     {
         return "ice";

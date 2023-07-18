@@ -1,35 +1,9 @@
 @extends('layouts.master')
+@section('title')
+    Ajouter de facture
+@endsection
 @section('content')
-<div class="d-flex justify-content-between mb-2">
-    <h5 class="m-0">Ajouter un facture</h5>
-    <ol class="breadcrumb m-0 py-2">
-        <li class="text-white fw-bolder">
-            <a href="{{ route('home') }}" class="text-white">
-                Acceuil
-            </a>
-        </li>
-        @can('facture-list')
-            <li class="text-white mx-2 fw-bolder">
-                <span class="ti ti-angle-right" style="font-size:0.60rem"></span>
-            </li>
-            <li class="text-white fw-bolder">
-                <a href="{{ route('facture.index') }}" class="text-white">
-                    Liste des factures
-                </a>
-            </li>
-        @endcan
-        @can('facture-create')
-            <li class="text-white mx-2 fw-bolder">
-                <span class="ti ti-angle-right" style="font-size:0.60rem"></span>
-            </li>
-            <li class="text-white fw-bolder">
-                <a href="{{ route('facture.create') }}" class="text-white">
-                    Ajouter du facture
-                </a>
-            </li>
-        @endcan
-    </ol>
-</div>
+
 
 <form action="{{ route('facture.store') }}" method="post">
     @csrf
@@ -99,28 +73,11 @@
                             </div>
                         </div>
 
-                        <div class="col mb-2">
-                            <div class="form-group">
-                                <label for="" class="form-label">TVA</label>
-                                <input type="number" name="tva" id="tva" min="0" max="100" class="form-control @error('tva') is-invalid @enderror">
-                                @error('tva')
-                                    <strong class="invalid-feedback">{{ $message }}</strong>
-                                @enderror
-                            </div>
-                        </div>
 
-                        <div class="col mb-2">
-                            <div class="form-group">
-                                <label for="" class="form-label">Type paiement</label>
-                                <select name="type" id="" class="form-select">
-                                    <option value="">Choisir le type du paiement</option>
-                                    <option value="espèce">Espèce</option>
-                                    <option value="chèque">Chèque</option>
-                                </select>
-                            </div>
-                        </div>
+
 
                     </div>
+
                 </div>
             </div>
         </div>
@@ -131,28 +88,32 @@
                 </div>
                 <div class="card-body p-2">
 
-
                     <div class="form-group mb-2">
-                        <label for="" class="form-label">Montant HT</label>
-                        <input type="number" name="total" id="total" class="form-control" readonly step="any" min="0">
+                        <label for="" class="form-label">TVA</label>
+                        <input type="number" name="tva" id="tva" min="0" max="100" class="form-control" readonly value="{{ $tva }}">
                     </div>
+                    <ul class="list-group">
+                        <li class="list-group-item py-2px d-flex justify-content-between text-uppercase">
+                            <h6 class="m-0 fs-12">total</h6>
+                            <h6 class="m-0 fs-12">0 dh</h6>
+                            <input type="hidden" name="total" id="total" value="">
+                        </li>
+                        <li class="list-group-item py-2px d-flex justify-content-between text-uppercase">
+                            <h6 class="m-0 fs-12">ttc</h6>
+                            <h6 class="m-0 fs-12 text-success">0 dh</h6>
+                            <input type="hidden" name="ttc" id="ttc" value="">
+                        </li>
+                        <li class="list-group-item py-2px d-flex justify-content-between text-uppercase">
+                            <h6 class="m-0 fs-12">reste</h6>
+                            <h6 class="m-0 fs-12 text-danger">0 dh</h6>
+                            <input type="hidden" name="reste" id="reste" value="">
+                        </li>
+                        <li class="list-group-item py-2px d-flex justify-content-between text-uppercase">
+                            <h6 class="m-0 fs-12">nombre des produits</h6>
+                            <h6 class="m-0 fs-12">0</h6>
+                        </li>
+                    </ul>
 
-                    <div class="form-group mb-2">
-                        <label for="" class="form-label">Payer</label>
-                        <input type="number" name="payer" id="payer" class="form-control" step="any" min="0">
-                    </div>
-
-
-                    <div class="form-group mb-2">
-                        <label for="" class="form-label">Reste</label>
-                        <input type="number" name="reste" id="reste" min="1" class="form-control" readonly>
-                    </div>
-
-
-                    <div class="form-group mb-2">
-                        <label for="" class="form-label">Montant TTC</label>
-                        <input type="number" name="ttc" id="ttc" class="form-control" readonly step="any" min="0">
-                    </div>
 
                 </div>
             </div>
@@ -164,49 +125,59 @@
             <h6 class="m-0 text-uppercase title">Ajouter des produits</h6>
         </div>
         <div class="card-body p-2">
-            <div class="row row-cols-4 mb-2" id="product">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-header bg-warning">
-                            <h6 class="m-0 text-center text-uppercase">Article : 1</h6>
-                        </div>
-                        <div class="card-body p-2">
-                            <div class="form-group mb-2">
-                                <input type="text" name="reference[]" id="" class="form-control form-control-sm reference" required placeholder="Référence">
-                                <div class="filter"></div>
-                            </div>
-                            <div class="form-group mb-2">
-                                <input type="text" name="designation[]" id="" class="form-control form-control-sm designation" required placeholder="Désignation">
-                            </div>
-                            <div class="form-group mb-2">
-                                <input type="number" name="prix_unitaire[]" id="" min="1" class="form-control form-control-sm prix-unitaire" step="any" value="0" required placeholder="Prix vente">
-                            </div>
-                            <div class="form-group mb-2">
-                                <input type="number" name="quantite[]" id="" min="1" class="form-control form-control-sm quantite" value="0" required min="1" placeholder="Quantite">
-                            </div>
-                            <div class="form-group mb-2">
-                                <input type="number" name="montant[]" id="" min="1" class="form-control form-control-sm montant" step="any" value="0" required readonly  placeholder="Montant">
-                            </div>
-                            <div class="input-group input-group-sm mb-2">
-                                <input type="text" name="remise[]" class="form-control remise" placeholder="Remise" value="0" aria-describedby="basic-addon1">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon1">%</span>
-                                </div>
-                              </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-                <button type="button" class="btn btn-dark btn-sm" id="add_btn">
-                    {{-- <span class="mdi mdi-plus fw-bolder"></span> --}}
-                    Ajouter autre produit
-                </button>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered m-0 datatable">
+                    <thead class="table-success">
+                        <tr>
 
+                            <th class="col-2">référence</th>
+                            <th>nom</th>
+                            <th class="col-1">prix</th>
+                            <th class="col-1">quantité</th>
+                            <th class="col-1">remise</th>
+                            <th class="col-2">montant</th>
+                            <th class="col-1">reste du stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($produits as $produit)
+                            <tr>
+                                <td class="align-middle">
+                                    <div class="form-check fs-12">
+                                        {{-- @if ($produit->stock)
+
+                                        @else
+
+                                        @endif --}}
+                                        <input type="checkbox" name="pro[]" id="p{{$produit->id}}" class="form-check-input pro" value="{{ $produit->id }}" {{  $produit->stock->reste ?? 'disabled' }}>
+                                        <label for="p{{$produit->id}}" class="form-check-label">{{ $produit->reference }}</label>
+                                    </div>
+                                </td>
+                                <td class="align-middle fs-12">{{ $produit->designation }}</td>
+                                <td class="align-middle">
+                                    {{ $produit->prix_vente}} DH
+                                    <input type="hidden" name="prix[]" class="price" value="{{ $produit->prix_vente }}">
+                                </td>
+                                <td class="align-middle">
+                                    <input type="number" name="quantite[]" step="any" min="1"  id="" max="{{ $produit->stock->reste ?? '' }}" class="form-control form-control-sm qte" disabled>
+                                </td>
+                                <td class="align-middle">
+                                    <input type="number" name="remise[]" step="any"  id="" class="form-control form-control-sm remise" disabled>
+                                </td>
+                                <td class="align-middle">
+                                    <input type="number" name="montant[]" step="any"  id="" class="form-control form-control-sm montant" readonly disabled>
+                                </td>
+                                <td class="align-middle">
+                                    <h6 class="m-0 {{ $produit->stock->reste ?? 'text-danger' }}">{{ $produit->stock->reste ?? 'Aucun stock' }}</h6>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    <button type="submit" class="btn btn-dark btn-sm">
+    <button type="submit" class="btn btn-dark btn-sm" id="save">
         Enregistrer
     </button>
 </form>
@@ -222,9 +193,6 @@
   $(document).ready(function(){
 
 
-
-    let i = 1;
-
     $(document).on("change","#client",function(){
 
 
@@ -238,249 +206,40 @@
                     $("#NGroup").val(data.nom);
                     $("#RGroup").val(data.remise);
 
+                    let tva = $("#tva").val();
+
+                    let count_pro = $(".pro:checked").length;
+                    let sum = 0;
+
+                    $(".montant").each(function(){
+                        sum += +$(this).val();
+                    });
+                    let remise_facture = data.remise;
+                    let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+
+                    $("li:nth-child(1) h6:nth-child(2)").html(parseFloat(sum).toFixed(2) + " dh");
+                    $("li:nth-child(2) h6:nth-child(2)").html(ttc + " dh");
+                    $("li:nth-child(3) h6:nth-child(2)").html(ttc + " dh");
+                    $("li:nth-child(4) h6:nth-child(2)").html(count_pro);
+                    $("#total").val(sum);
+                    $("#ttc").val(ttc);
+                    $("#reste").val(ttc);
+
                 }
             })
     })
 
-    $(document).on("change",".select-produit",function(e){
-        let reference = $(this).val();
-        let quantite = $(e.target).parent().parent().parent().parent().parent().children("div").children(".quantite").val(1);
-        let quantite_val = quantite.val();
-
-        $.ajax({
-            type:"GET",
-            url:"{{ route('getProduit') }}",
-            data:{"ref":reference},
-            success:function(data){
-                $(e.target).parent().parent().parent().parent().parent().children("div").children(".designation").val(data.designation);
-                $(e.target).parent().parent().parent().parent().parent().children("div").children(".prix-unitaire").val(data.prix_vente);
-                let montant = parseFloat(data.prix_vente * quantite_val).toFixed(2);
-                $(e.target).parent().parent().parent().parent().parent().children("div").children(".montant").val(montant);
-            }
-        })
-        $('.filter').addClass('d-none');
-
-    })
-
-    $(document).on("keyup",".quantite",function(e){
-        let sum = 0;
-        let quantite = $(e.target).val();
-        let tva = $("#tva").val();
-        let ht = parseFloat($("#total").val()).toFixed(2);
-        let remise = $(e.target).parent().parent().children("div").children(".remise").val();
-        let price = $(e.target).parent().parent().children("div").children(".prix-unitaire").val()
-        let montant = parseFloat(quantite * price);
-        let montantRemise = parseFloat((quantite * price) * ( 1 - (remise/100))).toFixed(2);
-
-
-        let remise_facture = $("#RGroup").val();
-
-
-        if(remise == 0 || remise == '')
-        {
-            $(e.target).parent().parent().children("div").children(".montant").val(montant)
-            $(".montant").each(function(){
-                sum += +$(this).val();
-            });
-
-            let ttc = parseFloat((sum * (1 - ( tva/100))) * (1 - (remise_facture/100))).toFixed(2);
-            $("#ttc").val(ttc);
-            $("#total").val(ttc);
-            $("#payer").attr("max",ttc);
-            $("#reste").val(ttc);
-
-
-        }
-        else
-        {
-            $(e.target).parent().parent().children("div").children(".montant").val(montantRemise)
-            $(".montant").each(function(){
-                sum += +$(this).val();
-            });
-            let ttc = parseFloat((sum * (1 - ( tva/100))) * (1 - (remise_facture/100))).toFixed(2);
-            $("#ttc").val(ttc);
-            $("#total").val(ttc);
-            $("#payer").attr("max",ttc);
-            $("#reste").val(ttc);
-        }
-
-
-
-
-    })
-
-
-    $(document).on("keyup",".prix-unitaire",function(e){
-        let sum = 0;
-        let price = $(e.target).val();
-        let remise = $(e.target).parent().parent().children("div").children(".remise").val();
-        let quantite = $(e.target).parent().parent().children("div").children(".quantite").val()
-        let montant = parseFloat(price * quantite);
-        let montantRemise = parseFloat(montant * ( 1 - (remise/100))).toFixed(2);
-
-
-        let remise_facture = $("#RGroup").val();
-
-
-        if(remise == 0 || remise == '')
-        {
-            $(e.target).parent().parent().children("div").children(".montant").val(montant)
-            $(".montant").each(function(){
-                sum += +$(this).val();
-            });
-
-            let ttc = parseFloat((sum * (1 - ( tva/100))) * (1 - (remise_facture/100))).toFixed(2);
-            $("#ttc").val(ttc);
-            $("#total").val(ttc);
-            $("#payer").attr("max",ttc);
-            $("#reste").val(ttc);
-
-
-        }
-        else
-        {
-            $(e.target).parent().parent().children("div").children(".montant").val(montantRemise)
-            $(".montant").each(function(){
-                sum += +$(this).val();
-            });
-            let ttc = parseFloat((sum * (1 - ( tva/100))) * (1 - (remise_facture/100))).toFixed(2);
-            $("#ttc").val(ttc);
-            $("#total").val(ttc);
-            $("#payer").attr("max",ttc);
-            $("#reste").val(ttc);
-        }
-    })
-
-
-
-    $(document).on("keyup","#payer",function(){
-
-        let payer = $(this).val();
-        let ttc = $("#ttc").val();
-        let resu = 0;
-        resu = parseFloat(ttc - payer).toFixed(2);
-        if(payer == "" || payer == 0){
-            $("#reste").val(ttc);
+    $("#type").on("change",function(){
+        let type = $(this).val();
+        if(type == "chèque"){
+            $("#cheque").show(450);
         }
         else{
-            $("#reste").val(resu);
-        }
-
-
-    })
-
-
-    // remise des produits
-    $(document).on("keyup",".remise",function(e){
-        let sum = 0;
-        let sum_remise = 0;
-        let quantite = $(e.target).parent().parent().children("div").children(".quantite").val();
-        let remise = $(e.target).val();
-        let price = $(e.target).parent().parent().children("div").children(".prix-unitaire").val()
-        let montant = parseFloat(quantite * price);
-        let montantRemise = parseFloat(montant * ( 1 - (remise/100))).toFixed(2);
-        $(e.target).parent().parent().children("div").children(".montant").val(montant)
-        $(".montant").each(function(){
-            sum += +$(this).val();
-        });
-        if(remise == 0){
-            $("#total").val(sum);
-            $("#ttc").val(montant);
-        }
-        else{
-            $(e.target).parent().parent().children("div").children(".montant").val(montantRemise)
-            $(".montant").each(function(){
-                sum_remise += +$(this).val();
-            });
-            $("#total").val(sum);
-            $("#ttc").val(sum_remise);
-        }
-    })
-
-    $(document).on("keyup",".reference",function(e){
-        let reference = $(this).val();
-        if(reference != ''){
-            $.ajax({
-                type:"GET",
-                url:"{{ route('facture.create') }}",
-                data:{"ref":reference},
-                success:function(data){
-                    if(reference != ''){
-                        $(e.target).parent().children(".filter").html(data);
-                        console.log($(".refer").val());
-                    }
-                    else{
-                        $(e.target).parent().children(".filter").html("aucun produit")
-                    }
-                }
-            })
-        }
-        else{
-            $(e.target).parent().parent().children("div").children(".designation").val("");
-            $(e.target).parent().parent().children("div").children(".quantite").val("");
-            $(e.target).parent().parent().children("div").children(".prix-unitaire").val("");
-            $(e.target).parent().parent().children("div").children(".montant").val("");
-            $(e.target).parent().parent().children("div").children(".remise").val("");
-        }
-    })
-
-
-    $(document).on("keyup","#tva",function(){
-        let ht = $("#total").val();
-        let tva = $(this).val();
-        let remise_facture = $("#RGroup").val();
-        let ttc = parseFloat(ht * (1 - ( tva/100))).toFixed(2);
-        let ttc_remise = parseFloat(ttc * (1 - (remise_facture/100))).toFixed(2);
-        if(remise_facture != 0 || remise_facture != ''){
-            $("#ttc").val(ttc_remise);
-            $("#reste").val(ttc_remise);
-        }
-        else{
-            $("#ttc").val(ttc);
-            $("#reste").val(ttc);
+            $("#cheque").hide(450);
 
         }
     })
 
-    $('#add_btn').on('click',function(){
-        i++;
-        var html="";
-        html+='<div class="col">';
-                html+='<div class="card">';
-                    html+='<div class="card-header bg-warning">';
-                        html+='<h6 class="m-0 text-center text-uppercase">Article : '+i+'</h6>';
-                    html+='</div>';
-                    html+='<div class="card-body p-2">';
-                        html+='<div class="form-group mb-2">';
-                            html+='<input type="text" name="reference[]" id="" class="form-control form-control-sm reference" required placeholder="Référence">';
-                            html+='<div class="filter"></div>';
-                        html+='</div>';
-                        html+='<div class="form-group mb-2">';
-                            html+='<input type="text" name="designation[]" id="" class="form-control form-control-sm designation" required placeholder="Désignation">';
-                        html+='</div>';
-                        html+='<div class="form-group mb-2">';
-                            html+='<input type="number" name="prix_unitaire[]" id="" min="1" class="form-control form-control-sm prix-unitaire" step="any" required placeholder="Prix vente">';
-                        html+='</div>';
-                        html+='<div class="form-group mb-2">';
-                            html+='<input type="number" name="quantite[]" id="" min="1" class="form-control form-control-sm quantite" required min="1" placeholder="Quantite">';
-                        html+='</div>';
-                        html+='<div class="form-group mb-2">';
-                            html+='<input type="number" name="montant[]" id="" min="1" class="form-control form-control-sm montant" step="any" required readonly placeholder="Montant">';
-                        html+='</div>';
-                        html+='<div class="input-group input-group-sm mb-2">';
-                            html+='<input type="text" name="remise[]" class="form-control remise" placeholder="Remise" value="0" aria-describedby="basic-addon1">';
-                            html+='<div class="input-group-prepend">';
-                                html+='<span class="input-group-text" id="basic-addon1">%</span>';
-                            html+='</div>';
-                        html+='</div>';
-                        html+='<div class="form-group mb-2">';
-                            html+='<button type="button" class="btn btn-danger btn-sm w-100" id="remove_btn"><span class="mdi mdi-trash-can fw-bolder"></span></button>';
-                        html+='</div>';
-                    html+='</div>';
-                html+='</div>';
-            html+='</div>';
-      $('#product').append(html);
-    });
 
     $(document).on("change","#group",function(){
         let id = $(this).val();
@@ -503,20 +262,213 @@
     })
 
 
-    $("#client").on("change",function(){
-        let cli = $(this).val();
-        if(cli == "autre" || cli == ""){
-            $("#nouveau").show(450);
-        }
-        else{
-            $("#nouveau").hide(450);
+    $(document).on("change",".pro",function(e){
+        if($(this).is(':checked')){
+            let count_pro = $(".pro:checked").length;
+            let sum = 0;
+            $(e.target).parent().parent().parent().children('td').children(".qte").prop("disabled",false);
+            $(e.target).parent().parent().parent().css("background-color","#57C5B6");
+            $(e.target).parent().parent().parent().children('td').children(".montant").prop("disabled",false);
+            $(e.target).parent().parent().parent().children('td').children(".remise").prop("disabled",false);
+            $(e.target).parent().parent().parent().children('td').children(".qte").val(1);
+            $(e.target).parent().parent().parent().children('td').children(".remise").val(0);
+            let qte = $(e.target).parent().parent().parent().children('td').children(".qte").val();
+            let price = $(e.target).parent().parent().parent().children('td').children(".price").val();
+            let remise = $(e.target).parent().parent().parent().children('td').children(".remise").val();
+            let montant = parseFloat(qte * price).toFixed(2);
+            let tva = $("#tva").val();
+            let remise_facture = $("#RGroup").val();
+            let montantRemise = parseFloat(montant * ( 1 - (remise/100))).toFixed(2);
+
+            if(remise == 0)
+            {
+                $(e.target).parent().parent().parent().children('td').children(".montant").val(montant);
+                $(".montant").each(function(){
+                    sum += +$(this).val();
+                })
+                let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+                $("li:nth-child(1) h6:nth-child(2)").html(parseFloat(sum).toFixed(2) + " dh");
+                $("li:nth-child(2) h6:nth-child(2)").html(ttc + " dh");
+                $("li:nth-child(3) h6:nth-child(2)").html(ttc + " dh");
+                $("li:nth-child(4) h6:nth-child(2)").html(count_pro);
+                $("#total").val(sum);
+                $("#ttc").val(ttc);
+                $("#reste").val(ttc);
+            }
+            else
+            {
+                $(e.target).parent().parent().parent().children('td').children(".montant").val(montantRemise);
+                $(".montant").each(function(){
+                    sum += +$(this).val();
+                })
+                let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+                $("li:nth-child(1) h6:nth-child(2)").html(parseFloat(sum).toFixed(2) + " dh");
+                $("li:nth-child(2) h6:nth-child(2)").html(ttc + " dh");
+                $("li:nth-child(3) h6:nth-child(2)").html(ttc + " dh");
+                $("li:nth-child(4) h6:nth-child(2)").html(count_pro);
+                $("#total").val(sum);
+                $("#ttc").val(ttc);
+                $("#reste").val(ttc);
+            }
 
         }
+        else
+        {
+            $(e.target).parent().parent().parent().children('td').children(".qte").prop("disabled",true);
+            $(e.target).parent().parent().parent().children('td').children(".remise").prop("disabled",true);
+            $(e.target).parent().parent().parent().children('td').children(".montant").prop("disabled",true);
+            $(e.target).parent().parent().parent().children('td').children(".montant").val(0);
+            $(e.target).parent().parent().parent().children('td').children(".qte").val(0);
+            let count_pro = $(".pro:checked").length;
+            let sum = 0;
+            let qte = $(e.target).parent().parent().parent().children('td').children(".qte").val();
+            let price = $(e.target).parent().parent().parent().children('td').children(".price").val();
+            let remise = $(e.target).parent().parent().parent().children('td').children(".remise").val();
+            let montant = parseFloat(qte * price).toFixed(2);
+            let tva = $("#tva").val();
+            let remise_facture = $("#RGroup").val();
+            let montantRemise = parseFloat(montant * ( 1 - (remise/100))).toFixed(2);
+            if(remise == 0)
+            {
+                $(e.target).parent().parent().parent().children('td').children(".montant").val(montant);
+                $(".montant").each(function(){
+                    sum += +$(this).val();
+                })
+                let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+                $("li:nth-child(1) h6:nth-child(2)").html(parseFloat(sum).toFixed(2) + " dh");
+                $("li:nth-child(2) h6:nth-child(2)").html(ttc + " dh");
+                $("li:nth-child(3) h6:nth-child(2)").html(ttc + " dh");
+                $("li:nth-child(4) h6:nth-child(2)").html(count_pro);
+                $("#total").val(sum);
+                $("#ttc").val(ttc);
+                $("#reste").val(ttc);
+            }
+            else
+            {
+                $(e.target).parent().parent().parent().children('td').children(".montant").val(montantRemise);
+                $(".montant").each(function(){
+                    sum += +$(this).val();
+                })
+                let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+                $("li:nth-child(1) h6:nth-child(2)").html(parseFloat(sum).toFixed(2) + " dh");
+                $("li:nth-child(2) h6:nth-child(2)").html(ttc + " dh");
+                $("li:nth-child(3) h6:nth-child(2)").html(ttc + " dh");
+                $("li:nth-child(4) h6:nth-child(2)").html(count_pro);
+                $("#total").val(sum);
+                $("#ttc").val(ttc);
+                $("#reste").val(ttc);
+            }
+        }
     })
+
+
+    $(".qte").on("keyup",function(e){
+        let qte = $(e.target).val();
+        let count_pro = $(".pro:checked").length;
+        let price = $(e.target).parent().parent().children("td").children(".price").val();
+        let remise = $(e.target).parent().parent().children("td").children(".remise").val();
+        let montant = parseFloat(qte * price).toFixed(2);
+        let montantRemise = parseFloat(montant * ( 1 - (remise/100))).toFixed(2);
+        let sum = 0;
+        let remise_facture = $("#RGroup").val();
+        let tva = $("#tva").val();
+        if(remise == 0){
+            $(e.target).parent().parent().children("td").children(".montant").val(montant);
+            $(".montant").each(function(){
+                sum += +$(this).val();
+            });
+            let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+            $("li:nth-child(1) h6:nth-child(2)").html(parseFloat(sum).toFixed(2) + " dh");
+            $("li:nth-child(2) h6:nth-child(2)").html(ttc + " dh");
+            $("li:nth-child(3) h6:nth-child(2)").html(ttc + " dh");
+            $("li:nth-child(4) h6:nth-child(2)").html(count_pro);
+            $("#total").val(sum);
+            $("#ttc").val(ttc);
+            $("#reste").val(ttc);
+        }
+        else{
+            $(e.target).parent().parent().children("td").children(".montant").val(montantRemise);
+            $(".montant").each(function(){
+                sum += +$(this).val();
+            });
+            let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+            $("li:nth-child(1) h6:nth-child(2)").html(parseFloat(sum).toFixed(2) + " dh");
+            $("li:nth-child(2) h6:nth-child(2)").html(ttc + " dh");
+            $("li:nth-child(3) h6:nth-child(2)").html(ttc + " dh");
+            $("li:nth-child(4) h6:nth-child(2)").html(count_pro);
+            $("#total").val(sum);
+            $("#ttc").val(ttc);
+            $("#reste").val(ttc);
+        }
+    })
+
+
+
+    $(".remise").on("keyup",function(e){
+        let remise = $(e.target).val();
+        let count_pro = $(".pro:checked").length;
+        let price = $(e.target).parent().parent().children("td").children(".price").val();
+        let qte = $(e.target).parent().parent().children("td").children(".qte").val();
+        let montant = parseFloat(qte * price).toFixed(2);
+        let montantRemise = parseFloat(montant * ( 1 - (remise/100))).toFixed(2);
+        let sum = 0;
+        let remise_facture = $("#RGroup").val();
+        let tva = $("#tva").val();
+        if(remise == 0){
+            $(e.target).parent().parent().children("td").children(".montant").val(montant);
+            $(".montant").each(function(){
+                sum += +$(this).val();
+            });
+            let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+            $("li:nth-child(1) h6:nth-child(2)").html(parseFloat(sum).toFixed(2) + " dh");
+            $("li:nth-child(2) h6:nth-child(2)").html(ttc + " dh");
+            $("li:nth-child(3) h6:nth-child(2)").html(ttc + " dh");
+            $("li:nth-child(4) h6:nth-child(2)").html(count_pro);
+            $("#total").val(sum);
+            $("#ttc").val(ttc);
+            $("#reste").val(ttc);
+        }
+        else{
+            $(e.target).parent().parent().children("td").children(".montant").val(montantRemise);
+            $(".montant").each(function(){
+                sum += +$(this).val();
+            });
+            let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+            $("li:nth-child(1) h6:nth-child(2)").html(parseFloat(sum).toFixed(2) + " dh");
+            $("li:nth-child(2) h6:nth-child(2)").html(ttc + " dh");
+            $("li:nth-child(3) h6:nth-child(2)").html(ttc + " dh");
+            $("li:nth-child(4) h6:nth-child(2)").html(count_pro);
+            $("#total").val(sum);
+            $("#ttc").val(ttc);
+            $("#reste").val(ttc);
+        }
+    })
+
+
+    $("#tva").on("keyup",function(){
+        let tva = $(this).val();
+
+        let count_pro = $(".pro:checked").length;
+        let sum = 0;
+
+        $(".montant").each(function(){
+            sum += +$(this).val();
+        });
+        let remise_facture = $("#RGroup").val();
+        let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+
+        $("li:nth-child(1) h6:nth-child(2)").html(parseFloat(sum).toFixed(2) + " dh");
+        $("li:nth-child(2) h6:nth-child(2)").html(ttc + " dh");
+        $("li:nth-child(3) h6:nth-child(2)").html(ttc + " dh");
+        $("li:nth-child(4) h6:nth-child(2)").html(count_pro);
+        $("#total").val(sum);
+        $("#ttc").val(ttc);
+        $("#reste").val(ttc);
+
+    })
+
   });
-  $(document).on('click','#remove_btn',function() {
-  $(this).closest('.col').remove();
-  })
+
 
 
 

@@ -10,18 +10,13 @@
             <div id="sidebar-menu">
                 <!-- Left Menu Start -->
                 <ul class="metismenu list-unstyled" id="side-menu">
-                    <li class="menu-title">Main</li>
-                    {{-- @can('tableau-bord') --}}
                         <li>
                             <a href="{{ route('home') }}" class="waves-effect">
                                 <i class="dripicons-device-desktop"></i>
                                 <span>Tableau de bord</span>
                             </a>
                         </li>
-
-                    {{-- @endcan --}}
                     @can('categorie-list')
-
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="dripicons-suitcase"></i>
@@ -29,22 +24,51 @@
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
                             @can('categorie-list')
-                            <li>
-                                <a href="{{ route('categorie.index') }}">Catégories</a>
-                            </li>
+                                <li>
+                                    <a href="{{ route('categorie.index') }}">Catégories</a>
+                                </li>
                             @endcan
                             @can('produit-list')
-                            <li>
-                                <a href="{{ route('produit.index') }}">Produits</a>
-                            </li>
+                                <li>
+                                    <a href="{{ route('produit.index') }}">Produits</a>
+                                </li>
                             @endcan
+
+                            @can('caracteristique-list')
+                                <li>
+                                    <a href="{{ route('caracteristique.index') }}">Caractéristiques</a>
+                                </li>
+                            @endcan
+                            @can('stock-list')
+                                <li>
+                                    <a href="{{ route('stock.index') }}">Stock</a>
+                                </li>
+                            @endcan
+
+                        </ul>
+                    </li>
+
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="dripicons-suitcase"></i>
+                            <span>Achat</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            @can('user-list')
+                                <li>
+                                    <a href="{{ route('fournisseur.index') }}">Fournisseur</a>
+                                </li>
+                            @endcan
+                    
+
                         </ul>
                     </li>
                     @elsecan('produit-list')
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="dripicons-suitcase"></i>
-                            <span>Collaboration</span>
+                            <span>GRH</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
                             @can('user-list')
@@ -69,15 +93,22 @@
                     </li>
                     @endcan
 
-                    @can('facture-list')
-                        <li>
-                            <a href="{{ route('facture.index') }}" class="waves-effect">
-                                <i class="mdi mdi-file-outline mdi-18px"></i>
-                                <span>Factures</span>
-                            </a>
-                        </li>
-                    @endcan
 
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="dripicons-suitcase"></i>
+                            <span>Ventes</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            @can('facture-list')
+                                <li>
+                                    <a href="{{ route('facture.index') }}">Factures</a>
+                                </li>
+                            @endcan
+
+
+                        </ul>
+                    </li>
 
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -192,6 +223,16 @@
                             <span>Vente semaine</span>
                         </a>
                     </li>
+
+                    <li>
+                        <a href="{{ route('customize.index') }}" class="waves-effect">
+                            <i class="dripicons-device-desktop"></i>
+                            <span>Personalisation</span>
+                        </a>
+                    </li>
+
+
+
                 @endcan
 
                 </ul>

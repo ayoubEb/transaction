@@ -1,10 +1,13 @@
 @extends('layouts.master')
 @section('content')
+
+
 @can('vente-semaine-create')
+    @if($deja == 0)
     <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#add">
         <span>Nouveau</span>
     </button>
-
+    @endif
 @endcan
     <div class="card">
         <div class="card body p-2">
@@ -31,13 +34,13 @@
                                 <td class="align-middle">{{ $amount->montant_amana }} DH</td>
                                 <td class="align-middle">{{ $amount->montant_ghazala }} DH</td>
                                 <td class="align-middle">
-                                    @can('vente-semaine-destroy')
-                                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#show{{$amount->id}}">
+                                    @can('vente-semaine-show')
+                                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#show{{$amount->id}}">
                                         <span class="mdi mdi-eye-outline"></span>
                                     </button>
                                     @endcan
-                                    @can('vente-semaine-show')
-                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#destroy{{$amount->id}}">
+                                    @can('vente-semaine-destroy')
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#destroy{{$amount->id}}">
                                             <span class="mdi mdi-trash-can"></span>
                                         </button>
                                     @endcan
@@ -199,7 +202,7 @@
                 <div class="modal-content">
                     <div class="modal-header py-2">
                         <h6 class="modal-title m-0" id="exampleModalCenterTitle">Confirmer la suppression</h6>
-                        <button type="button" class="btn bg-transparent p-0" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="btn bg-transparent p-0 border-0" data-bs-dismiss="modal" aria-label="Close">
                             <span class="mdi mdi-close-thick"></span>
                         </button>
                     </div>
@@ -207,23 +210,26 @@
                         <form action="{{ route('week-amount.destroy',$amount) }}" method="post">
                             @csrf
                             @method("DELETE")
-                            <h6 class="mb-2 text-center">
-                                Vous avez supprimer le semaine défenetivement
-
+                            <h6 class="mb-2 text-center text-muted">
+                                Voulez-vous vraiment déplacer du vente de semaine vers la corbeille
                             </h6>
+                            <div class="d-flex justify-content-center mb-2" >
+                                <div class="form-check">
+                                    <input type="checkbox" name="force" id="del{{$amount->id}}" class="form-check-input">
+                                    <label for="del{{$amount->id}}" class="form-check-label fw-bolder">Ignorer la corbeille et supprimer définitivement du vente de semaine</label>
+                                </div>
+
+                            </div>
                             <div class="row justify-content-center">
                                 <div class="col-lg-5">
                                     <button type="submit" class="btn btn-success btn-sm w-100">OUI</button>
-
                                 </div>
                                 <div class="col-lg-5">
-                                    <button type="button" class="btn btn-danger btn-sm w-100" data-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="btn btn-danger btn-sm w-100" data-bs-dismiss="modal" aria-label="Close">
                                         NON
                                     </button>
-
                                 </div>
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -238,7 +244,7 @@
             <div class="modal-content">
                 <div class="modal-header py-2">
                     <h6 class="modal-title m-0" id="exampleModalCenterTitle">Nouveau Vente semaine</h6>
-                    <button type="button" class="btn bg-transparent p-0" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn bg-transparent p-0" data-bs-dismiss="modal" aria-label="Close">
                         <span class="mdi mdi-close-thick"></span>
                     </button>
                 </div>
@@ -257,12 +263,12 @@
                             <div class="col-lg-6">
                                 <div class="card">
                                     <div class="card-header bg-success">
-                                        <h6 class="font-weight-normal m-0 text-white text-uppercase text-center">les ventes</h6>
+                                        <h6 class="font-weight-normal m-0 text-white text-uppercase text-center title">les ventes</h6>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body p-2">
                                         <div class="row mb-3">
                                             @foreach ($date_week as $week)
-                                            <input type="hidden" name="jour[]" value="{{ \App\Models\WeekAmount::day(date("D",strtotime($week))) }}">
+                                                <input type="hidden" name="jour[]" value="{{ \App\Models\WeekAmount::day(date("D",strtotime($week))) }}">
                                                 <div class="col-lg-4 mb-2">
                                                     {{ \App\Models\WeekAmount::day(date("D",strtotime($week))) }}
                                                 </div>
@@ -287,7 +293,7 @@
 
                                         <div class="row mb-2">
                                             <div class="col-lg-3 d-flex align-items-center">
-                                                <h6 class="m-0">Total Vente</h6>
+                                                <h6 class="m-0 text-uppercase">Total Vente</h6>
                                             </div>
                                             <div class="col">
                                                 <input type="number" name="total_vente" id="total-vente" class="form-control" step="any" min="0" readonly value="0">
@@ -296,7 +302,7 @@
                                                 <input type="text" id="total-online" class="form-control" disabled>
                                             </div>
                                         </div>
-                                        <h6 class="my-3 text-center">Amana</h6>
+                                        <h6 class="my-3 text-center text-uppercase">Amana</h6>
                                         <div class="row mb-2">
                                             <div class="col-lg-6">
                                                 <input type="number" name="amana" class="form-control" step="any" min="0" id="mt-amana" value="0">
@@ -306,7 +312,7 @@
                                                 <input type="file" name="file_amana" class="form-control">
                                             </div>
                                         </div>
-                                        <h6 class="my-3 text-center">ghazala</h6>
+                                        <h6 class="my-3 text-center text-uppercase">ghazala</h6>
                                         <div class="row mb-2">
 
                                             <div class="col-lg-6">
@@ -317,6 +323,17 @@
                                                     <input type="file" name="file_ghazala" class="form-control">
                                             </div>
                                         </div>
+                                        <h6 class="my-3 text-center text-uppercase">Autre</h6>
+                                        <div class="row">
+
+                                            <div class="col-lg-6">
+                                                <input type="number" name="autre" class="form-control" step="any" min="0" id="mt-autre" value="0" >
+
+                                            </div>
+                                            <div class="col-lg-6">
+                                                    <input type="file" name="file_autre" class="form-control">
+                                            </div>
+                                        </div>
 
                                     </div>
                                 </div>
@@ -324,7 +341,7 @@
                             <div class="col-lg-6">
                                 <div class="card">
                                     <div class="card-header bg-success">
-                                        <h6 class="font-weight-normal m-0 text-white text-uppercase text-center">les achats</h6>
+                                        <h6 class="font-weight-normal m-0 text-white text-uppercase text-center title">les achats</h6>
                                     </div>
                                     <div class="card-body">
                                         <div class="row mb-3">
@@ -381,6 +398,10 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group mb-2">
+                            <label for="" class="form-label">Remarque</label>
+                            <textarea name="remarque" id="" rows="3" class="form-control" style="resize: none"></textarea>
+                        </div>
                         <button type="submit" class="btn btn-sm btn-success">Save </button>
                     </form>
                 </div>
@@ -405,8 +426,9 @@
                 let total_achat =parseFloat($("#total-achat").val());
                 let montant_amana =parseFloat($("#mt-amana").val());
                 let montant_ghazala =parseFloat($("#mt-ghazala").val());
+                let montant_autre =parseFloat($("#mt-autre").val());
                 let montant_cheque =parseFloat($("#mt-cheque").val());
-                let reste = (total_vente +  montant_online)  - (total_achat + montant_amana + montant_ghazala);
+                let reste = (total_vente +  montant_online)  - (total_achat + montant_amana + montant_ghazala + montant_autre);
                 $("#reste").val(reste);
                 $("#total-online").val(montant_online + reste);
                 $("#result-final").html(reste - montant_cheque + " DH " );
@@ -418,10 +440,11 @@
                 let total_achat =parseFloat($("#total-achat").val());
                 let montant_amana =parseFloat($("#mt-amana").val());
                 let montant_ghazala =parseFloat($("#mt-ghazala").val());
+                let montant_autre =parseFloat($("#mt-autre").val());
                 let montant_online =parseFloat($("#mt-online").val());
                 let montant_cheque =parseFloat($("#mt-cheque").val());
                 $("#total-online").val(montant_online + total_vente);
-                let reste = (montant_online + total_vente)  - (total_achat + montant_amana + montant_ghazala);
+                let reste = (montant_online + total_vente)  - (total_achat + montant_amana + montant_ghazala + montant_autre);
                 $("#reste").val(reste);
                 $("#result-final").html(reste - montant_cheque + " DH " );
 
@@ -435,9 +458,10 @@
                 let total_achat =parseFloat($("#total-achat").val());
                 let montant_amana =parseFloat($("#mt-amana").val());
                 let montant_ghazala =parseFloat($("#mt-ghazala").val());
+                let montant_autre =parseFloat($("#mt-autre").val());
                 let montant_online =parseFloat($("#mt-online").val());
                 let montant_cheque =parseFloat($("#mt-cheque").val());
-                let reste = (montant_online + total_vente)  - (total_achat + montant_amana + montant_ghazala);
+                let reste = (montant_online + total_vente)  - (total_achat + montant_amana + montant_ghazala + montant_autre);
                 $("#reste").val(reste);
                 $("#result-final").html(reste - montant_cheque + " DH " );
 
@@ -448,9 +472,10 @@
                 let total_achat =parseFloat($("#total-achat").val());
                 let montant_amana =parseFloat($("#mt-amana").val());
                 let montant_ghazala =parseFloat($("#mt-ghazala").val());
+                let montant_autre =parseFloat($("#mt-autre").val());
                 let montant_online =parseFloat($("#mt-online").val());
                 let montant_cheque =parseFloat($("#mt-cheque").val());
-                let reste = (montant_online + total_vente)  - (total_achat + montant_amana + montant_ghazala);
+                let reste = (montant_online + total_vente)  - (total_achat + montant_amana + montant_ghazala + montant_autre);
                 $("#reste").val(reste);
                 $("#result-final").html(reste - montant_cheque + " DH " );
 
@@ -469,6 +494,7 @@
                 let total_achat =parseFloat($("#total-achat").val());
                 let montant_amana =parseFloat($("#mt-amana").val());
                 let montant_ghazala =parseFloat($("#mt-ghazala").val());
+                let montant_autre =parseFloat($("#mt-autre").val());
                 let montant_online =parseFloat($("#mt-online").val());
                 let montant_cheque =parseFloat($("#mt-cheque").val());
                 let reste = (total_vente + montant_online) - (total_achat + montant_amana + montant_ghazala);
@@ -483,6 +509,7 @@
                 let total_achat =parseFloat($("#total-achat").val());
                 let montant_amana =parseFloat($("#mt-amana").val());
                 let montant_ghazala =parseFloat($("#mt-ghazala").val());
+                let montant_autre =parseFloat($("#mt-autre").val());
                 let montant_online =parseFloat($("#mt-online").val());
                 let montant_cheque =parseFloat($("#mt-cheque").val());
                 let reste =parseFloat($("#reste").val());

@@ -1,7 +1,9 @@
 @extends('layouts.master')
+@section('title')
+    Modifier l'authorisation : {{ $role->name }}
+@endsection
 @section('content')
 <div class="card">
-
     <div class="card-body p-2">
         @if (count($errors) > 0)
         <div class="alert alert-danger">
@@ -25,13 +27,330 @@
             </div>
         </div>
 
+
+
+        <div class="table-responsive">
+            <table class="table table-striped table-sm m-0">
+                {{-- <thead>
+
+                </thead> --}}
+                <tbody>
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">catégorie</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($categories as $categorie)
+                                    <div class="col m-0">
+                                        <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $categorie->id }}">
+
+                                            <div class="form-check form-switch">
+                                                {{ Form::checkbox('permission_u[]', $categorie->id, in_array($categorie->id, $rolePermissions) ? true : false, array('class' => 'form-check-input',"style"=>"cursor:pointer",'id'=>'swithe'.$categorie->id)) }}
+                                                {{Str::after($categorie->name,"-")}}
+                                                {{-- <label class="form-check-label" for="swithe{{ $categorie->id }}"></label> --}}
+                                                {{--
+                                                Form::checkbox('permission[]', $categorie->id, in_array($categorie->id, $rolePermissions) ? true : false, array(['class' => 'name', "switch"=>"none"])) --}}
+
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    @endforeach
+
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">sous-catégorie</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($sous_categories as $sous_categorie)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $sous_categorie->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $sous_categorie->id, in_array($sous_categorie->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$sous_categorie->id)) }}
+                                                    {{Str::after($sous_categorie->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">caractéristique</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($caracteristiques as $caracteristique)
+                                        <div class="col m-0">
+                                            <li class="list-group-item py-1 d-flex justify-content-center" style="cursor: pointer;" for="swithe{{ $caracteristique->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $caracteristique->id, in_array($caracteristique->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$caracteristique->id)) }}
+                                                    <label class="form-check-label" for="swithe{{ $caracteristique->id }}">{{Str::after($caracteristique->name,"-")}}</label>
+                                                </div>
+                                            </li>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">stock</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($stocks as $stock)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $stock->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $stock->id, in_array($stock->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$stock->id)) }}
+                                                    {{Str::after($stock->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">facture</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($factures as $facture)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $facture->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $facture->id, in_array($facture->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$facture->id)) }}
+                                                    {{Str::after($facture->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">personalisation</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($customizes as $customize)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $customize->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $customize->id, in_array($customize->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$customize->id)) }}
+                                                    {{Str::after($customize->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">groupe</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($groupes as $groupe)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $groupe->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $groupe->id, in_array($groupe->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$groupe->id)) }}
+                                                    {{Str::after($groupe->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">client</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($clients as $client)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $client->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $client->id, in_array($client->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$client->id)) }}
+                                                    {{Str::after($client->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">produit</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($produits as $produit)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $produit->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $produit->id, in_array($produit->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$produit->id)) }}
+                                                    {{Str::after($produit->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">utilisateur</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($users as $user)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $user->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $user->id, in_array($user->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$user->id)) }}
+                                                    {{Str::after($user->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">rôle</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($roles as $role)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $role->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $role->id, in_array($role->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$role->id)) }}
+                                                    {{Str::after($role->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">Entreprise</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($entreprises as $entreprise)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $entreprise->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $entreprise->id, in_array($entreprise->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$entreprise->id)) }}
+                                                    {{Str::after($entreprise->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">transaction</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($transactions as $transaction)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $transaction->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $transaction->id, in_array($transaction->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$transaction->id)) }}
+                                                    {{Str::after($transaction->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">vente semaine</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($vente_semaines as $vente_semaine)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $vente_semaine->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $vente_semaine->id, in_array($vente_semaine->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$vente_semaine->id)) }}
+                                                    {{Str::after($vente_semaine->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="table-success col-lg-2 col-4 align-middle">type clients</th>
+                        <td class="align-middle">
+                            <ul class="list-group">
+                                <div class="row row-cols-6 m-0">
+                                    @foreach($type_clients as $type_client)
+                                        <div class="col m-0">
+                                            <label class="list-group-item py-1 d-flex justify-content-center m-0" style="cursor: pointer;" for="swithe{{ $type_client->id }}">
+                                                <div class="form-check form-switch">
+                                                    {{ Form::checkbox('permission_u[]', $type_client->id, in_array($type_client->id, $rolePermissions) ? true : false, array('class' => 'form-check-input','id'=>'swithe'.$type_client->id)) }}
+                                                    {{Str::after($type_client->name,"-")}}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+
+
+
         <div class="row row-cols-5">
-            @foreach($permission as $value)
-                <div class="col mb-2">
-                    {{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions) ? true : false, array('class' => 'name')) }}
-                    {{ $value->name }}
-                </div>
-            @endforeach
+
 
         </div>
         <div class="row row-cols-2 justify-content-between">

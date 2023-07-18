@@ -1,0 +1,610 @@
+
+    @foreach($week_amounts as $amount)
+        <div class="modal fade" id="show{{ $amount->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header py-2">
+                        <h6 class="modal-title m-0" id="exampleModalCenterTitle">Information du semaine</h6>
+                        <button type="button" class="btn bg-transparent p-0" data-dismiss="modal" aria-label="Close">
+                            <span class="mdi mdi-close-thick"></span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-header bg-success">
+                                        <h6 class="m-0 text-center text-uppercase">les achats</h6>
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <div class="row">
+                                            @foreach ($amount->sales as $sale)
+                                                <div class="col-lg-4 mb-2">
+                                                    <h6 class="m-0 font-weight-normal">{{ $sale->jour }}</h6>
+                                                </div>
+                                                <div class="col-lg-4 mb-2">
+                                                    <h6 class="m-0 font-weight-normal">{{ $sale->date_sale }}</h6>
+                                                </div>
+                                                <div class="col-lg-4 mb-2">
+                                                    <h6 class="m-0 font-weight-normal">{{ $sale->montant }} DH</h6>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-header bg-success">
+                                        <h6 class="m-0 text-center text-uppercase">les ventes</h6>
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <div class="row">
+                                            @foreach ($amount->purchases as $purchase)
+                                                <div class="col-lg-3 mb-2">
+                                                    <h6 class="m-0 font-weight-normal">{{ $purchase->jour }}</h6>
+                                                </div>
+                                                <div class="col-lg-3 mb-2">
+                                                    <h6 class="m-0 font-weight-normal">{{ $purchase->title }}</h6>
+                                                </div>
+                                                <div class="col-lg-3 mb-2">
+                                                    <h6 class="m-0 font-weight-normal">{{ $purchase->date_purchase }}</h6>
+                                                </div>
+                                                <div class="col-lg-3 mb-2">
+                                                    <h6 class="m-0 font-weight-normal">{{ $purchase->montant }} DH</h6>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="m-0 text-uppercase text-center">Montant</h6>
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <ul class="list-group mb-2">
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <h6 class="m-0">Montant vente</h6>
+                                                <h6 class="font-weight-normal m-0">{{ $amount->total_vente }} DH</h6>
+                                            </li>
+                                            <li class="list-group-item  d-flex justify-content-between">
+                                                <h6 class="m-0">Montant achat</h6>
+                                                <h6 class="font-weight-normal m-0">{{ $amount->total_achat }} DH</h6>
+                                            </li>
+                                            <li class="list-group-item  d-flex justify-content-between">
+                                                <h6 class="m-0">Montant amana</h6>
+                                                <h6 class="font-weight-normal m-0">{{ $amount->montant_amana }} DH</h6>
+                                            </li>
+                                            <li class="list-group-item  d-flex justify-content-between">
+                                                <h6 class="m-0">Montant ghazala</h6>
+                                                <h6 class="font-weight-normal m-0">{{ $amount->montant_ghazala }} DH</h6>
+                                            </li>
+                                            <li class="list-group-item  d-flex justify-content-between">
+                                                <h6 class="m-0">Montant chèque</h6>
+                                                <h6 class="font-weight-normal m-0">{{ $amount->montant_cheque }} DH</h6>
+                                            </li>
+                                            <li class="list-group-item  d-flex justify-content-between">
+                                                <h6 class="m-0">Montant en ligne</h6>
+                                                <h6 class="font-weight-normal m-0">{{ $amount->montant_online }} DH</h6>
+                                            </li>
+                                            <li class="list-group-item  d-flex justify-content-between">
+                                                <h6 class="m-0">Montant reste à verser</h6>
+                                                <h6 class="font-weight-normal m-0">{{ $amount->reste_verser }} DH</h6>
+                                            </li>
+                                            <li class="list-group-item  d-flex justify-content-between">
+                                                <h6 class="m-0">Montant final</h6>
+                                                <h6 class="font-weight-normal m-0">{{ $amount->reste_final }} DH</h6>
+                                            </li>
+                                        </ul>
+
+                                        <div class="mb-2">
+                                            <h6 class="mb-2 text-center text-uppercase">chèque</h6>
+                                            <img src="{{asset('storage/images/cheque/'.$amount->file_cheque)}}" alt="" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-header bg-success">
+                                        <h6 class="m-0 text-uppercase text-center">File</h6>
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <h6 class="mb-2 text-center text-uppercase">amana</h6>
+                                                <img src="{{asset('storage/images/amana/'.$amount->file_amana)}}" alt="" class="img-fluid">
+                                                {{-- <h5 class="m-0 text-center">{{}}</h5> --}}
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <h6 class="mb-2 text-center text-uppercase">ghazala</h6>
+                                                <img src="{{asset('storage/images/ghazala/'.$amount->file_ghazala)}}" alt="" class="img-fluid">
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <h6 class="mb-2 text-center text-uppercase">reste à verse</h6>
+                                                <img src="{{asset('storage/images/verse/'.$amount->file_verse)}}" alt="" class="img-fluid">
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="destroy{{ $amount->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header py-2">
+                        <h6 class="modal-title m-0" id="exampleModalCenterTitle">Confirmer la suppression</h6>
+                        <button type="button" class="btn bg-transparent p-0" data-dismiss="modal" aria-label="Close">
+                            <span class="mdi mdi-close-thick"></span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('week-amount.destroy',$amount) }}" method="post">
+                            @csrf
+                            @method("DELETE")
+                            <h6 class="mb-2 text-center">
+                                Vous avez supprimer le semaine défenetivement
+
+                            </h6>
+                            <div class="row justify-content-center">
+                                <div class="col-lg-5">
+                                    <button type="submit" class="btn btn-success btn-sm w-100">OUI</button>
+
+                                </div>
+                                <div class="col-lg-5">
+                                    <button type="button" class="btn btn-danger btn-sm w-100" data-dismiss="modal" aria-label="Close">
+                                        NON
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    @endforeach
+
+
+    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h6 class="modal-title m-0" id="exampleModalCenterTitle">Nouveau Vente semaine</h6>
+                    <button type="button" class="btn bg-transparent p-0" data-dismiss="modal" aria-label="Close">
+                        <span class="mdi mdi-close-thick"></span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{route('week-amount.store')}}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <h6 class="text-center mb-2">
+                            Semaine :
+                            <span class="font-weight-normal">
+                                {{ date("d-m-Y",strtotime($start_date))}}
+                                =>
+                                {{ date("d-m-Y",strtotime($end_date))}}
+                            </span>
+                        </h6>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-header bg-success">
+                                        <h6 class="font-weight-normal m-0 text-white text-uppercase text-center">les ventes</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            @foreach ($date_week as $week)
+                                            <input type="hidden" name="jour[]" value="{{ \App\Models\WeekAmount::day(date("D",strtotime($week))) }}">
+                                                <div class="col-lg-4 mb-2">
+                                                    {{ \App\Models\WeekAmount::day(date("D",strtotime($week))) }}
+                                                </div>
+                                                <div class="col-lg-4 mb-2 ">
+                                                    {{ date("d-m-Y",strtotime($week)) }}
+                                                </div>
+                                                <div class="col-lg-4 mb-2">
+                                                    <input type="number" name="montant_vente[]" id="" class="form-control mt-vente" min="0" step="any" value="0">
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-lg-6">
+                                                <h6 class="m-0">En ligne</h6>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <input type="number" name="online" id="mt-online" class="form-control" min="0" step="any" value="0">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row mb-2">
+                                            <div class="col-lg-3 d-flex align-items-center">
+                                                <h6 class="m-0">Total Vente</h6>
+                                            </div>
+                                            <div class="col">
+                                                <input type="number" name="total_vente" id="total-vente" class="form-control" step="any" min="0" readonly value="0">
+                                            </div>
+                                            <div class="col">
+                                                <input type="text" id="total-online" class="form-control" disabled>
+                                            </div>
+                                        </div>
+                                        <h6 class="my-3 text-center">Amana</h6>
+                                        <div class="row mb-2">
+                                            <div class="col-lg-6">
+                                                <input type="number" name="amana" class="form-control" step="any" min="0" id="mt-amana" value="0">
+
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <input type="file" name="file_amana" class="form-control">
+                                            </div>
+                                        </div>
+                                        <h6 class="my-3 text-center">ghazala</h6>
+                                        <div class="row mb-2">
+
+                                            <div class="col-lg-6">
+                                                <input type="number" name="ghazala" class="form-control" step="any" min="0" id="mt-ghazala" value="0" >
+
+                                            </div>
+                                            <div class="col-lg-6">
+                                                    <input type="file" name="file_ghazala" class="form-control">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-header bg-success">
+                                        <h6 class="font-weight-normal m-0 text-white text-uppercase text-center">les achats</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            @foreach ($date_week as $week)
+                                                <div class="col-lg-4 d-lg-none mb-2">
+                                                    {{ \App\Models\WeekAmount::day(date("D",strtotime($week))) }}
+                                                </div>
+                                                <div class="col-lg-4 mb-2 ">
+                                                    {{ date("d-m-Y",strtotime($week)) }}
+                                                </div>
+                                                <div class="col-lg-4 mb-2 ">
+                                                    <input type="text" name="text_achat[]" id="" class="form-control mt-achat" placeholder="Text">
+                                                </div>
+                                                <div class="col-lg-4 mb-2">
+                                                    <input type="number" name="montant_achat[]" id="" class="form-control mt-achat" step="any" value="0">
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-lg-3 d-flex align-items-center">
+                                                <h6 class="m-0">Total Achat</h6>
+                                            </div>
+                                            <div class="col">
+                                                <input type="number" name="total_achat" id="total-achat" class="form-control" step="any"  readonly value="0">
+                                            </div>
+                                        </div>
+                                        <h6 class="my-3 text-center">Reste à chèque</h6>
+                                        <div class="row mb-2">
+                                            <div class="col-lg-6">
+                                                <input type="number" name="cheque" id="mt-cheque" class="form-control" step="any" value="0">
+                                            </div>
+                                            <div class="col-lg-6">
+
+                                                <input type="file" name="file_cheque" class="form-control">
+                                            </div>
+                                        </div>
+                                        <h6 class="my-3 text-center">Reste à verser</h6>
+                                        <div class="row mb-2">
+
+                                            <div class="col-lg-6">
+                                                <input type="number" name="" class="form-control" step="any" id="reste" value="0" readonly>
+
+                                            </div>
+                                            <div class="col-lg-6">
+
+                                                <input type="file" name="file_verse" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-4">
+                                            <h5 class="m-2">Montant final</h5>
+                                            <h5 class="m-0 text-success" id="result-final">0 DH</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-success">Save </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+    <?php
+
+namespace App\Http\Controllers;
+
+use App\Models\AmountPurchase;
+use App\Models\AmountSale;
+use App\Models\WeekAmount;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+
+
+class WeekAmountController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+
+
+
+
+        $weeks = WeekAmount::select("id",
+            "date_debut",
+            "date_fin",
+            "total_vente",
+            "total_achat",
+            "montant_amana",
+            "montant_ghazala",
+            "reste_verser",
+            "montant_cheque",
+            "montant_online",
+            "file_ghazala",
+            "file_amana",
+            "file_cheque",
+            "file_verse",
+            "reste_final")->get();
+
+        $amounts = WeekAmount::join("amount_sales","amount_sales.id","=","amount_sales.week_amount_id")->join("amount_purchases","amount_purchases.id","=","amount_purchases.week_amount_id")
+        ->select("amount_purchases.week_amount_id",
+            "amount_sales.week_amount_id",
+            "week_amounts.id as id",
+            "week_amounts.*",
+            )
+        ->groupBy("id")
+        ->get();
+        foreach ($amounts as $k => $row) {
+            $row->purchases = AmountPurchase::where("week_amount_id",$row->id)->get();
+            $row->sales = AmountSale::where("week_amount_id",$row->id)->get();
+        }
+        // dd($week_purchases);
+        // return view("amounts",compact("date_week","start_date","end_date","week_amounts"));
+        // $ex =
+        return view("amounts",["weeks"=>$weeks,"amounts"=>$amounts]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+
+    public function generer(Request $request){
+
+
+        $currentMonth = $request->month; // Get the current month
+        $year = Carbon::now()->year; // Get the current year
+
+        $startDate = Carbon::create($year, intval($request->month), 1)->startOfMonth(); // Get the start date of the month
+        $endDate = Carbon::create($year, intval($request->month), 1)->endOfMonth(); // Get the end date of the month
+
+        $weeks = [];
+
+        while ($startDate->isSameMonth($endDate)) {
+            $weekStart = $startDate->copy();
+            $weekEnd = $startDate->copy()->endOfWeek();
+
+            if ($weekEnd->isAfter($endDate)) {
+                $weekEnd = $endDate->copy();
+            }
+
+            $weeks[] = [
+                'start' => $weekStart->format('Y-m-d'),
+                'end' => $weekEnd->format('Y-m-d'),
+            ];
+
+            $startDate = $weekEnd->copy()->addDay();
+        }
+
+
+        foreach ($weeks as $week) {
+            WeekAmount::create([
+                "date_debut"=>$week["start"],
+                "date_fin"=>$week["end"],
+            ]);
+        }
+        return back();
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $currentDate = Carbon::today();
+        $currentDate->startOfWeek();
+        $currentDate->endOfWeek();
+
+
+        $startDate = $currentDate->copy()->startOfWeek();
+        $endDate = $currentDate->copy()->endOfWeek();
+
+
+        // $start_date = $startDate->toDateString();
+        // $end_date = $endDate->toDateString();
+
+        // // $date_week = array();
+        // // Loop through each day of the week
+        // $currentDate = $startDate;
+        // // while ($currentDate->lt($endDate)) {
+        // //     // Perform your desired action for each day
+        // //     $date_week[]=$currentDate->format('D Y-m-d');
+
+        // //     // Move to the next day
+        // //     $currentDate->addDay();
+        // // }
+
+        $week = $request->week;
+        $file_ghazala = "";
+        $file_amana = "";
+        $file_cheque = "";
+        $file_verse = "";
+        if($request->hasFile("file_ghazala")){
+            $destination_path = 'public/images/ghazala';
+            $image_ghazala = $request->file("file_ghazala");
+            $file_ghazala = $image_ghazala->getClientOriginalName();
+            $request->file("file_ghazala")->storeAs($destination_path,$file_ghazala);
+        }
+        if($request->hasFile("file_amana")){
+            $destination_path_amana = 'public/images/amana';
+            $image_amana = $request->file("file_amana");
+            $file_amana = $image_amana->getClientOriginalName();
+            $request->file("file_amana")->storeAs($destination_path_amana,$file_amana);
+        }
+        if($request->hasFile("file_cheque")){
+            $destination_path_cheque = 'public/images/cheque';
+            $image_cheque = $request->file("file_cheque");
+            $file_cheque = $image_cheque->getClientOriginalName();
+            $request->file("file_cheque")->storeAs($destination_path_cheque,$file_cheque);
+        }
+        if($request->hasFile("file_verse")){
+            $destination_path_verser = 'public/images/verse';
+            $image_verser = $request->file("file_verse");
+            $file_verse = $image_verser->getClientOriginalName();
+            $request->file("file_verse")->storeAs($destination_path_verser,$file_verse);
+        }
+
+        $resu = $request->total_vente + $request->online - ($request->total_achat + $request->amana + $request->ghazala);
+    //    $week =  WeekAmount::create([
+    //         "date_debut"=>$start_date,
+    //         "date_fin"=>$end_date,
+    //         "file_ghazala"=>$file_ghazala,
+    //         "file_amana"=>$file_amana,
+    //         "file_cheque"=>$file_cheque,
+    //         "file_verse"=>$file_verse,
+    //         "montant_amana"=>$request->amana,
+    //         "total_vente"=>$request->total_vente,
+    //         "total_achat"=>$request->total_achat,
+    //         "montant_ghazala"=>$request->ghazala,
+    //         "montant_online"=>$request->online,
+    //         "montant_cheque"=>$request->cheque,
+    //         "reste_verser"=>$resu,
+    //         "reste_final"=>$resu - $request->cheque,
+
+    //     ]);
+    // $d = $request->date_week->toDateString();
+    // dd($d);
+        WeekAmount::where("id",$week)->update([
+            "file_ghazala"=>$file_ghazala,
+            "file_amana"=>$file_amana,
+            "file_cheque"=>$file_cheque,
+            "file_verse"=>$file_verse,
+            "montant_amana"=>$request->amana,
+            "total_vente"=>$request->total_vente,
+            "total_achat"=>$request->total_achat,
+            "montant_ghazala"=>$request->ghazala,
+            "montant_online"=>$request->online,
+            "montant_cheque"=>$request->cheque,
+            "reste_verser"=>$resu,
+            "reste_final"=>$resu - $request->cheque,
+        ]);
+
+
+        foreach($request->jour as $k => $row){
+            if(!empty($row)){
+                AmountSale::create([
+                    "week_amount_id"=> $week,
+                    "jour"=>$request->jour[$k],
+                    "date_sale"=>date("Y-m-d",strtotime($request->date_week[$k])),
+                    "montant"=>$request->montant_vente[$k],
+                ]);
+                AmountPurchase::create([
+                    "week_amount_id"=> $week,
+                    "jour"=>$request->jour[$k],
+                    "date_purchase"=>date("Y-m-d",strtotime($request->date_week[$k])),
+                    "title"=>$request->text[$k] ?? "",
+                    "montant"=>$request->montant_achat[$k],
+
+                ]);
+
+            }
+        }
+
+        return back();
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\WeekAmount  $weekAmount
+     * @return \Illuminate\Http\Response
+     */
+    public function show(WeekAmount $weekAmount)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\WeekAmount  $weekAmount
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(WeekAmount $weekAmount)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\WeekAmount  $weekAmount
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, WeekAmount $weekAmount)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\WeekAmount  $weekAmount
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(WeekAmount $weekAmount)
+    {
+        //
+    }
+}

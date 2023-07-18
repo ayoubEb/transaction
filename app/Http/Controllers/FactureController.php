@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bank;
 use App\Models\Facture;
 use App\Models\FactureProduit;
 use App\Models\Client;
-use App\Models\ClientPaiement;
+use App\Models\CustomizeFacture;
+use App\Models\CustomizeStock;
 use App\Models\Entreprise;
 use App\Models\FacturePaiement;
-use App\Models\FactureReglement;
+use App\Models\FacturePaiementCheque;
 use App\Models\Group;
 use App\Models\Produit;
+use App\Models\Stock;
+use App\Models\StockHistorique;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+
 use PDF;
 // use Barryvdh\DomPDF\PDF;
 // use App\Post;
@@ -30,7 +34,16 @@ class FactureController extends Controller
     public function index()
     {
 
-        return view('factures.index',['factures'=>Facture::all(),"clients"=>Client::all()]);
+        $factures = Facture::all();
+        $clients = Client::all();
+        $banks = Bank::select('id',"nom_bank")->get();
+        return view('factures.index',
+            [
+            'factures'=>$factures,
+            "clients"=>$clients,
+            "banks"=>$banks,
+            ]
+        );
     }
 
     /**
@@ -40,28 +53,22 @@ class FactureController extends Controller
      */
     public function create(Request $request)
     {
-
-        if($request->ajax()){
-            $data = Produit::where('reference', 'LIKE', $request->ref. '%')->get();
-            $output = '';
-            if (count ($data) >0){
-                $output = '<ul class="list-group" style="display:block;position:relative;z-indez:1;">';
-                foreach($data as $row) {
-                    $output .= '<li class="list-group-item py-1">';
-                        $output .= '<input class="form-check-input me-1 select-produit refer" type="radio" name="refere" value="'.$row->reference.'" >';
-                        $output .= '<label>'.$row->reference.'</label>';
-                    $output .= '</li>';
-                    }
-                $output .= '</ul>';
-            }
-
-            return $output;
-            }
+        $produits = Produit::select("id","reference","prix_vente","designation")->get();
         $clients = Client::get(["id","raison_sociale"]);
 
         $groupes = Group::get(["id","nom"]);
         $entreprises = Entreprise::get(["id","raison_sociale"]);
-        return  view('factures.create',['clients'=>$clients,"entreprises"=>$entreprises,"groupes"=>$groupes]);
+        $banks = Bank::select("id","nom_bank")->get();
+        $tva = CustomizeFacture::select("tva")->first()->tva;
+        return  view('factures.create',[
+            'clients'=>$clients,
+            "entreprises"=>$entreprises,
+            "groupes"=>$groupes,
+            "banks"=>$banks,
+            "produits"=>$produits,
+            "tva"=>$tva
+            ]
+        );
     }
 
     /**
@@ -72,14 +79,14 @@ class FactureController extends Controller
      */
     public function store(Request $request)
     {
+        $customize_facture = CustomizeFacture::select("reference","numero","tva")->first();
+        $count_facture = Facture::count();
+        $reference = strval($count_facture + $customize_facture->numero);
 
-
-
-        $i=0;
         $facture = Facture::create([
             "client_id"=>$request->client_id,
             "remise"=>$request->remise_facture,
-            "num_facture"=>"FAC-00"."4",
+            "num_facture"=>$customize_facture->reference.$reference,
             "statut"=>$request->statut,
             "date"=>$request->date ?? Carbon::today(),
             "prix_ht"=>$request->total,
@@ -87,42 +94,42 @@ class FactureController extends Controller
             "prix_ttc" => $request->ttc,
             "remise" => $request->remise_facture ?? 0,
             "entreprise_id" => $request->entreprise_id,
-            "payer"=>$request->payer,
-            "reste"=>$request->reste,
-
+            "payer"=>0,
+            "reste"=>$request->ttc,
+           "etat_paiement"=>"attente",
         ]);
-        foreach($request->reference as $k =>  $value){
-          if($request->remise[$k]==0){
-            $montant_produit = $request->prix_unitaire[$k] * $request->quantite[$k];
+
+        foreach($request->pro as $k =>  $value){
+
+            FactureProduit::create([
+                "facture_id"=>$facture->id,
+                "produit_id"=>$value,
+                "quantite" => $request->quantite[$k],
+                "remise" => $request->remise[$k],
+                "montant" => $request->montant[$k],
+            ]);
+
+
+
+            $stock = Produit::join("stocks","produits.id","=","stocks.produit_id")
+            ->select('stocks.produit_id',"stocks.entre","stocks.sortie","stocks.reste","stocks.id","stocks.date_stock")
+            ->where("stocks.produit_id",$value)
+            ->first();
+            if(isset($stock)){
+                Produit::join("stocks","produits.id","=","stocks.produit_id")
+                ->select('stocks.produit_id',"stocks.reste","stocks.sortie","produits.quantite","stocks.reserverAttente")
+                ->where("stocks.produit_id",$value)
+                ->update([
+                    "reserverAttente"=>$request->quantite[$k],
+                ]);
+
+            }
         }
-        else{
-            $prix_total = $request->prix_unitaire[$k] * $request->quantite[$k];
-
-            $montant_produit = $prix_total * (1 - ($request->remise[$k]/100) );
-        }
-        FactureProduit::create([
-            "facture_id"=>$facture->id,
-            "reference" => $request->reference[$k],
-            "designation" => $request->designation[$k],
-            "quantite" => $request->quantite[$k],
-            "prix_unitaire" => $request->prix_unitaire[$k],
-            "remise" => $request->remise[$k],
-            "montant" => $montant_produit,
-        ]);
-    }
-    FacturePaiement::create([
-        "client_id"=>$request->client_id,
-        "facture_id"=>$facture->id,
-        "payer"=>$request->payer ?? 0,
-        "reste"=>$request->reste,
-        "date_paiement"=>Carbon::today(),
-        "type_paiement"=>$request->type,
-        ]);
 
 
 
-      Session()->flash("success","L'enregistrement du facture success");
-      return redirect()->route("facture.index");
+        toast("L'enregistrement du facture effectuée","success");
+        return redirect()->route("facture.index");
       }
 
       /**
@@ -135,6 +142,77 @@ class FactureController extends Controller
     {
 
     }
+      /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Facture  $facture
+     * @return \Illuminate\Http\Response
+     */
+    public function produits(Facture $facture)
+    {
+        $produits = Produit::select("id","reference")->get();
+        return view("factures.produits",
+            [
+                "facture"=>$facture,
+                "produits"=>$produits
+            ]
+            );
+
+    }
+      /**
+     * Valider the specified resource.
+     *
+     * @param  \App\Models\Facture  $facture
+     * @return \Illuminate\Http\Response
+     */
+    public function valider(Facture $facture)
+    {
+        $facture->update([
+            "statut"=>"validé",
+        ]);
+
+        $produits = FactureProduit::where("facture_id",$facture->id)->get();
+
+        foreach($produits as $k =>  $value){
+
+
+
+            $stock = Produit::join("stocks","produits.id","=","stocks.produit_id")
+            ->select('stocks.produit_id',"stocks.entre","stocks.sortie","stocks.reste","stocks.id","stocks.date_stock","stocks.reserverAttente")
+            ->where("stocks.produit_id",$produits[$k]->produit_id)
+            ->first();
+            // if(isset($stock)){
+                Produit::join("stocks","produits.id","=","stocks.produit_id")
+                ->select('stocks.produit_id',"stocks.reste","stocks.sortie","produits.quantite","stocks.reserverAttente","stocks.reserverValider")
+                ->where("stocks.produit_id",$produits[$k]->produit_id)
+                ->update([
+                    "sortie"=>$produits[$k]->quantite + $stock->sortie,
+                    "reste"=>$stock->entre - ($produits[$k]->quantite + $stock->sortie),
+                    "quantite"=>$stock->entre - ($produits[$k]->quantite + $stock->sortie),
+                    "reserverAttente"=>0,
+                    "reserverValider"=>$stock->reserverAttente,
+                ]);
+                $st_h = StockHistorique::where("stock_id",$stock->id)->where("fonction","qte_entre")->exists();
+
+                if($st_h == false){
+                    StockHistorique::create([
+                        "stock_id"=>$stock->id,
+                        "fonction"=>"qte_entre",
+                        "quantite"=>$stock->entre,
+                        "date_mouvement"=>$stock->date_stock,
+                    ]);
+                }
+                StockHistorique::create([
+                    "stock_id"=>$stock->id,
+                    "fonction"=>"qte_sortie",
+                    "quantite"=>$produits[$k]->quantite,
+                    "date_mouvement"=>Carbon::now(),
+                ]);
+            // }
+        }
+
+        return back();
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -144,27 +222,12 @@ class FactureController extends Controller
      */
     public function edit(Facture $facture,Request $request)
     {
-        // $sum_ht = FactureProduit::where('facture_id',$facture->id)->sum("")
-        if($request->ajax()){
-            $data = Produit::where('reference', 'LIKE', $request->ref. '%')->get();
 
-            $output = '';
-            if (count ($data) >0){
-                $output = '<ul class="list-group" style="display:block;position:relative;z-indez:1;">';
-                foreach($data as $row) {
-                    $output .= '<li class="list-group-item py-1">';
-                        $output .= '<input class="form-check-input me-1 select-produit" type="checkbox" name="reference[]" value="'.$row->reference.'" >';
-                        $output .= $row->reference;
-                    $output .= '</li>';
-                    }
-                $output .= '</ul>';
-            }
-
-            return $output;
-            }
+            $produits = Produit::select("id","reference","designation","prix_vente")->get();
         return view('factures.edit',
         [
           'facture'=>$facture,
+          'produits'=>$produits,
           'sum_ttc'=>Facture::sum("prix_ttc"),
           'clients'=>Client::all()
           ]
@@ -182,10 +245,10 @@ class FactureController extends Controller
       {
        $facture->update([
         "client_id"=>$request->client_id,
-        "num_facture"=>$request->num_facture,
-        "statut"=>$request->statut ?? "desactiver",
+        "statut"=>$request->statut ?? "en cours",
+        "taux_tva"=>$request->tva,
        ]);
-        Session()->flash('update','La notification du facture effectuée');
+       toast("La modification du facture effectuée","success");
         return back();
 
       }
@@ -196,88 +259,133 @@ class FactureController extends Controller
      * @param  \App\Models\Facture  $facture
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Facture $facture, Request $request)
     {
-        $del_facture = Facture::find($id);
-        $del_facture->delete();
-        Session()->flash('delete','La suppression du facture effectuté');
+
+
+        $produits = $facture->produits()->get();
+        foreach($produits as $row => $val){
+            $stock = Produit::join("stocks","produits.id","=","stocks.produit_id")
+            ->select('stocks.produit_id',"stocks.entre","stocks.sortie","stocks.reste","produits.quantite")
+            ->where("stocks.produit_id",$produits[$row]->produit_id)
+            ->first();
+            if(isset($stock)){
+
+                Produit::join("stocks","produits.id","=","stocks.produit_id")
+                ->select('stocks.produit_id',"stocks.reste","stocks.sortie","produits.quantite")
+                ->where("stocks.produit_id",$produits[$row]->produit_id)
+                ->update([
+                    "sortie"=>$stock->sortie - $produits[$row]->quantite,
+                    "reste"=>$stock->reste + $produits[$row]->quantite,
+                    "quantite"=> $stock->quantite + $produits[$row]->quantite,
+                ]);
+            }
+        }
+        if(isset($request->force)){
+            $facture->forceDelete();
+            toast("La suppression du facture effectuée","success");
+        }
+        else{
+            toast("La déplacement du corbeille du facture effectuée","success");
+            $facture->delete();
+
+        }
+
+
+
+        toast("La suppression du facture effectuée","success");
         return redirect()->route('facture.index');
+    }
+    /**
+     * update the specified resource from storage.
+     *
+     * @param  \App\Models\Facture  $facture
+     * @return \Illuminate\Http\Response
+     */
+    public function statut_valider(Request $request, Facture $facture)
+    {
+        $facture->update([
+            "statut"=>$request->statut,
+        ]);
+
+        return back();
     }
 
     public static function asLetters($number) {
-$convert = explode('.', $number);
-$num[17] = array('zero', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit',
-'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize');
+        $convert = explode('.', $number);
+        $num[17] = array('zero', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit',
+        'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize');
 
-$num[100] = array(20 => 'vingt', 30 => 'trente', 40 => 'quarante', 50 => 'cinquante',
-60 => 'soixante', 70 => 'soixante-dix', 80 => 'quatre-vingt', 90 => 'quatre-vingt-dix');
+        $num[100] = array(20 => 'vingt', 30 => 'trente', 40 => 'quarante', 50 => 'cinquante',
+        60 => 'soixante', 70 => 'soixante-dix', 80 => 'quatre-vingt', 90 => 'quatre-vingt-dix');
 
-if (isset($convert[1]) && $convert[1] != '') {
-return self::asLetters($convert[0]).' et '.self::asLetters($convert[1]);
-}
-if ($number < 0) return 'moins '.self::asLetters(-$number);
-if ($number < 17) {
-return $num[17][$number];
-}
-elseif ($number < 20) {
-return 'dix-'.self::asLetters($number-10);
-}
-elseif ($number < 100) {
-if ($number%10 == 0) {
-return $num[100][$number];
-}
-elseif (substr($number, -1) == 1) {
-if( ((int)($number/10)*10)<70 ){
-return self::asLetters((int)($number/10)*10).'-et-un';
-}
-elseif ($number == 71) {
-return 'soixante-et-onze';
-}
-elseif ($number == 81) {
-return 'quatre-vingt-un';
-}
-elseif ($number == 91) {
-return 'quatre-vingt-onze';
-}
-}
-elseif ($number < 70) {
-return self::asLetters($number-$number%10).'-'.self::asLetters($number%10);
-}
-elseif ($number < 80) {
-return self::asLetters(60).'-'.self::asLetters($number%20);
-}
-else {
-return self::asLetters(80).'-'.self::asLetters($number%20);
-}
-}
-elseif ($number == 100) {
-return 'cent';
-}
-elseif ($number < 200) {
-return self::asLetters(100).' '.self::asLetters($number%100);
-}
-elseif ($number < 1000) {
-return self::asLetters((int)($number/100)).' '.self::asLetters(100).($number%100 > 0 ? ' '.self::asLetters($number%100): '');
-}
-elseif ($number == 1000){
-return 'mille';
-}
-elseif ($number < 2000) {
-return self::asLetters(1000).' '.self::asLetters($number%1000).' ';
-}
-elseif ($number < 1000000) {
-return self::asLetters((int)($number/1000)).' '.self::asLetters(1000).($number%1000 > 0 ? ' '.self::asLetters($number%1000): '');
-}
-elseif ($number == 1000000) {
-return 'millions';
-}
-elseif ($number < 2000000) {
-return self::asLetters(1000000).' '.self::asLetters($number%1000000);
-}
-elseif ($number < 1000000000) {
-return self::asLetters((int)($number/1000000)).' '.self::asLetters(1000000).($number%1000000 > 0 ? ' '.self::asLetters($number%1000000): '');
-}
-}
+        if (isset($convert[1]) && $convert[1] != '') {
+        return self::asLetters($convert[0]).' et '.self::asLetters($convert[1]);
+        }
+        if ($number < 0) return 'moins '.self::asLetters(-$number);
+        if ($number < 17) {
+        return $num[17][$number];
+        }
+        elseif ($number < 20) {
+        return 'dix-'.self::asLetters($number-10);
+        }
+        elseif ($number < 100) {
+        if ($number%10 == 0) {
+        return $num[100][$number];
+        }
+        elseif (substr($number, -1) == 1) {
+        if( ((int)($number/10)*10)<70 ){
+        return self::asLetters((int)($number/10)*10).'-et-un';
+        }
+        elseif ($number == 71) {
+        return 'soixante-et-onze';
+        }
+        elseif ($number == 81) {
+        return 'quatre-vingt-un';
+        }
+        elseif ($number == 91) {
+        return 'quatre-vingt-onze';
+        }
+        }
+        elseif ($number < 70) {
+        return self::asLetters($number-$number%10).'-'.self::asLetters($number%10);
+        }
+        elseif ($number < 80) {
+        return self::asLetters(60).'-'.self::asLetters($number%20);
+        }
+        else {
+        return self::asLetters(80).'-'.self::asLetters($number%20);
+        }
+        }
+        elseif ($number == 100) {
+        return 'cent';
+        }
+        elseif ($number < 200) {
+        return self::asLetters(100).' '.self::asLetters($number%100);
+        }
+        elseif ($number < 1000) {
+        return self::asLetters((int)($number/100)).' '.self::asLetters(100).($number%100 > 0 ? ' '.self::asLetters($number%100): '');
+        }
+        elseif ($number == 1000){
+        return 'mille';
+        }
+        elseif ($number < 2000) {
+        return self::asLetters(1000).' '.self::asLetters($number%1000).' ';
+        }
+        elseif ($number < 1000000) {
+        return self::asLetters((int)($number/1000)).' '.self::asLetters(1000).($number%1000 > 0 ? ' '.self::asLetters($number%1000): '');
+        }
+        elseif ($number == 1000000) {
+        return 'millions';
+        }
+        elseif ($number < 2000000) {
+        return self::asLetters(1000000).' '.self::asLetters($number%1000000);
+        }
+        elseif ($number < 1000000000) {
+        return self::asLetters((int)($number/1000000)).' '.self::asLetters(1000000).($number%1000000 > 0 ? ' '.self::asLetters($number%1000000): '');
+        }
+    }
+
 
     public function showPdf(Facture $facture){
 
@@ -290,5 +398,7 @@ return self::asLetters((int)($number/1000000)).' '.self::asLetters(1000000).($nu
       return $pdf->stream();
       // return $pdf->download('facture.pdf');
     }
+
+
 
 }

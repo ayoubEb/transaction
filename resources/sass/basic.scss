@@ -34,3 +34,38 @@
         }
     }
 }
+
+
+#cheque{
+    display: none;
+}
+
+.pagination{
+    margin: 0 !important;
+    li{
+        line-height: 8px;
+        &.disabled{
+
+            line-height: 4px;
+        }
+        a{
+            font-size: 13px;
+            padding: 6px 10px;
+        }
+        &.active>.page-link{
+            padding: 6px 10px;
+            font-size: 13px !important;
+        }
+    }
+}
+
+.select2-container--default .select2-selection--single{
+    height: 2.15rem !important;
+}
+.select2-container--default .select2-selection--single{
+    padding-top: 3px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+    top: 3px !important;
+}

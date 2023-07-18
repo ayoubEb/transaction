@@ -16,18 +16,14 @@ class CategorySeeder extends Seeder
     public function run()
     {
         $data = [
+
             [
-                "nom"=>"Santé",
-                "description"=>"La catégorie Santé comprend produits, services et informations liés à la médecine, la prévention et la gestion des maladies",
-                "created_at"=>Carbon::now(),
-            ],
-            [
-                "nom"=>"beauté",
+                "nom"=>"Beauté & Santé",
                 "description"=>"La catégorie Beauté comprend produits et services pour prendre soin de sa peau, de ses cheveux et de son corps afin d'améliorer son apparence physique.",
                 "created_at"=>Carbon::now(),
             ],
             [
-                "nom"=>"animaux de compagnie",
+                "nom"=>"Animaux de compagnie",
                 "description"=>"La catégorie Animaux de compagnie englobe les espèces domestiques comme les chiens et les chats et comprend produits, services et informations pour leur santé et leur bien-être.",
                 "created_at"=>Carbon::now(),
             ],
@@ -57,18 +53,8 @@ class CategorySeeder extends Seeder
                 "created_at"=>Carbon::now(),
             ],
             [
-                "nom"=>"Sports",
+                "nom"=>"Sports & Loisirs",
                 "description"=>"La catégorie Sports inclut les activités physiques pratiquées à des fins de loisirs, de compétition ou de santé, telles que le football, le tennis, la gymnastique, la natation et le jogging.",
-                "created_at"=>Carbon::now(),
-            ],
-            [
-                "nom"=>"Loisirs",
-                "description"=>"La catégorie Loisirs regroupe les activités pratiquées pour se divertir, se détendre, se cultiver ou s'épanouir personnellement",
-                "created_at"=>Carbon::now(),
-            ],
-            [
-                "nom"=>"Jouets",
-                "description"=>"Un jouet est un objet dont la fonction principale est ludique et récréative et donc de permettre le jeu. Enfants du Burundi inventant leurs propres jouets.",
                 "created_at"=>Carbon::now(),
             ],
             [
@@ -77,7 +63,12 @@ class CategorySeeder extends Seeder
                 "created_at"=>Carbon::now(),
             ],
             [
-                "nom"=>"Jeux",
+                "nom"=>"Bébé & Jouets",
+                "description"=>"",
+                "created_at"=>Carbon::now(),
+            ],
+            [
+                "nom"=>"Informatique",
                 "description"=>"",
                 "created_at"=>Carbon::now(),
             ]

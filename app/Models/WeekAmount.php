@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class WeekAmount extends Model
 {
     use HasFactory;
     protected $table = "week_amounts";
     protected $guarded = [];
-
-
+    use SoftDeletes;
     /**
      * Get all of the comments for the WeekAmount
      *
@@ -19,11 +20,11 @@ class WeekAmount extends Model
      */
     public function sales(): HasMany
     {
-        return $this->hasMany(WeekAmountSale::class);
+        return $this->hasMany(AmountSale::class);
     }
     public function purchases(): HasMany
     {
-        return $this->hasMany(WeekAmountPurchase::class);
+        return $this->hasMany(AmountPurchase::class);
     }
 
     public static function day($jour){

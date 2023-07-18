@@ -17,12 +17,16 @@ class CreateStocksTable extends Migration
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Produit::class)->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string("type")->nullable();
-            $table->date("date_mouvement")->nullable();
-            $table->double("montant")->nullable();
+            $table->string("num")->nullable()->unique();
+            $table->string("statut")->nullable();
             $table->integer("entre")->nullable();
+            $table->integer("sortie")->nullable();
             $table->integer("reste")->nullable();
             $table->date("date_stock")->nullable();
+            $table->integer("min")->nullable();
+            $table->integer("initial")->nullable();
+            $table->integer("reserverValider")->nullable();
+            $table->integer("reserverAttente")->nullable();
             $table->timestamps();
         });
     }

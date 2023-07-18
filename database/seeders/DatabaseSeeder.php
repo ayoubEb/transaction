@@ -20,6 +20,15 @@ class DatabaseSeeder extends Seeder
         $this->call(GroupSeeder::class);
         $this->call(TypeClientSeeder::class);
         $this->call(ClientSeeder::class);
+        $this->call(SousCategorieSeeder::class);
+        $this->call(CaracteristiqueSeeder::class);
+        $this->call(FournisseurSeeder::class);
+        $this->call(CustomizeSeeder::class);
+        $this->call(BankSeeder::class);
+        $this->call(StockSeeder::class);
+
+
+
         // \App\Models\User::factory(10)->create();
     }
 }

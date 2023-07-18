@@ -19,6 +19,5 @@ mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/facture.scss', 'public/css')
     .sass('resources/sass/login.scss', 'public/css')
     .sass('resources/sass/basic.scss', 'public/css')
-    .sourceMaps()
-    .disableNotifications();
+    .sourceMaps();
 

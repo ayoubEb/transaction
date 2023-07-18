@@ -20,12 +20,12 @@ class CreateFacturesTable extends Migration
             $table->foreignIdFor(Client::class)->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Entreprise::class)->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('num_facture')->unique()->nullable();
-            $table->string('statut')->default('desactiver');
+            $table->string('statut')->nullable();
             $table->double('prix_ht')->nullable();
             $table->double('prix_ttc')->nullable();
             $table->double('taux_tva')->nullable();
             $table->double('remise')->nullable();
-            $table->string('etat')->nullable();
+            $table->string('etat_paiement')->nullable();
             $table->date('date')->nullable();
             $table->double('payer')->nullable();
             $table->double('reste')->nullable();

@@ -15,12 +15,11 @@
 
                 <h6 class="logo logo-light fs-5 text-center text-white">
                     <span class="logo-sm">
-                        {{-- <img src="assets/images/logo-sm.png" alt="" height="22"> --}}
-                        GF
+                        <img src="{{asset('assets/images/logo-sm.png')}}" alt="" width="100%" height="22">
+
                     </span>
                     <span class="logo-lg">
-                        Gestion facturation
-                        {{-- <img src="assets/images/logo-light.png" alt="" height="20"> --}}
+                        <img src="{{asset('assets/images/logo.png')}}" alt="" class="img-fluid p-2" height="24">
                     </span>
                 </h6>
             </div>
@@ -28,22 +27,13 @@
             <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
                 <i class="mdi mdi-menu"></i>
             </button>
-
-            <div class="d-none d-sm-block ms-2">
-                <h4 class="page-title font-size-18">Dashboard</h4>
-            </div>
-
-        </div>
-
-        <!-- Search input -->
-        <div class="search-wrap" id="search-wrap">
-            <div class="search-bar">
-                <input class="search-input form-control" placeholder="Search" />
-                <a href="#" class="close-search toggle-search" data-bs-target="#search-wrap">
-                    <i class="mdi mdi-close-circle"></i>
-                </a>
+            <div class="d-block ms-2">
+                <h4 class="page-title font-size-18">
+                    @yield('title')
+                </h4>
             </div>
         </div>
+
 
         <div class="d-flex">
 
@@ -60,7 +50,7 @@
             <div class="dropdown d-inline-block ms-2">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="rounded-circle header-profile-user" src="{{ asset('img/logo.png') }}"
+                    <img class="rounded-circle header-profile-user p-1 border border-solid border-success border-1" src="{{asset('assets/images/logo-profil.png')}}"
                         alt="Header Avatar">
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Facture;
+use App\Models\Produit;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,14 +17,11 @@ class CreateFactureProduitsTable extends Migration
     {
         Schema::create('facture_produits', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('facture_id')->nullable();
-            $table->string('reference')->nullable();
-            $table->string('designation')->nullable();
+            $table->foreignIdFor(Facture::class)->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(Produit::class)->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->integer('quantite')->default(1);
-            $table->double('prix_unitaire')->nullable();
             $table->double('remise')->nullable();
             $table->double('montant')->nullable();
-            $table->foreign('facture_id')->references('id')->on('factures')->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }

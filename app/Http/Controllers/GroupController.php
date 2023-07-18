@@ -10,10 +10,10 @@ class GroupController extends Controller
 {
     function __construct()
     {
-         $this->middleware('permission:groupe-list|groupe-create|groupe-edit|groupe-delete', ['only' => ['index','show']]);
-         $this->middleware('permission:groupe-create', ['only' => ['index','store']]);
-         $this->middleware('permission:groupe-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:groupe-delete', ['only' => ['destroy']]);
+         $this->middleware('permission:groupe-list|groupe-create|groupe-edit|groupe-destroy', ['only' => 'index']);
+         $this->middleware('permission:groupe-create', ['only' => 'store']);
+         $this->middleware('permission:groupe-edit', ['only' => 'update']);
+         $this->middleware('permission:groupe-destroy', ['only' => 'destroy']);
     }
 
     /**
@@ -114,12 +114,20 @@ class GroupController extends Controller
      * @param  \App\Models\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Group $group,Request $request)
     {
-        $del=Group::find($id);
-        $del->delete();
-        Session()->flash('delete','La suppression du group effectuté');
-        return redirect()->route('group.index');
+        if(isset($request->force))
+        {
+            $group->forceDelete();
+            toast("La suppression du group effectuée","success");
+        }
+        else
+        {
+            $group->delete();
+            toast("La déplacement du corbeille du group effectuée","success");
+
+        }
+        return back();
     }
 
 

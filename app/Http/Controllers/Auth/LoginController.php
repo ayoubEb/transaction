@@ -49,7 +49,7 @@ class LoginController extends Controller
 
 
         if(auth()->user()){
-          return redirect()->route('admin');
+          return redirect()->route('home');
         }
 
 

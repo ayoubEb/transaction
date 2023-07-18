@@ -17,22 +17,22 @@ class GroupSeeder extends Seeder
         $data = [
             [
                 "nom"=>"société",
-                "remise"=>15,
+                "remise"=>0,
                 "statut"=>"activer",
             ],
             [
                 "nom"=>"particulier",
-                "remise"=>30,
+                "remise"=>0,
                 "statut"=>"activer",
             ],
             [
                 "nom"=>"groupement",
-                "remise"=>40,
+                "remise"=>0,
                 "statut"=>"activer",
             ],
             [
                 "nom"=>"administration",
-                "remise"=>10,
+                "remise"=>0,
                 "statut"=>"activer",
             ],
             [
