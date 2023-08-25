@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class TypeClientController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:typeClient-list|typeClient-create|typeClient-edit|typeClient-destroy', ['only' => 'index']);
+         $this->middleware('permission:typeClient-create', ['only' => 'store']);
+         $this->middleware('permission:typeClient-edit', ['only' => 'update']);
+         $this->middleware('permission:typeClient-destroy', ['only' => 'destroy']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -74,12 +81,12 @@ class TypeClientController extends Controller
      * @param  \App\Models\TypeClient  $typeClient
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TypeClient $type_client)
+    public function update(Request $request, TypeClient $typeClient)
     {
         $request->validate([
             "nom_u"=>["required","not_regex:/^([a-z]+[0-9]+)|([A-Z]+[0-9]+)|([0-9]+)|([0-9]+[a-z]+)|([0-9]+[A-Z]+)$/"],
         ]);
-         $type_client->update([
+         $typeClient->update([
             "nom"=>$request->nom_u,
         ]);
         return back()->with("update","La notification du type effectuée");
@@ -91,9 +98,10 @@ class TypeClientController extends Controller
      * @param  \App\Models\TypeClient  $typeClient
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TypeClient $type_client)
+    public function destroy(TypeClient $typeClient)
     {
-        $type_client->delete();
-        return back()->with("update","La suppression du type effectuée");
+        $typeClient->delete();
+        toast("La déplacement du corbeille du type client effectuée","success");
+        return back();
     }
 }

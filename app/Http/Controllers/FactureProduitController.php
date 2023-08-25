@@ -62,9 +62,9 @@ class FactureProduitController extends Controller
 
         // $array_produit = Produit::whereIn("reference",$request->reference)->get();
         // $total = 0;
-        $facture = Facture::where("id",$request->facture_id)->first();
+        // $facture = Facture::where("id",$request->facture_id)->first();
 
-        foreach($request->pro as $row => $val){
+        foreach($request->pro_add as $row => $val){
 
             FactureProduit::create([
                 "facture_id"=>$request->facture_id,
@@ -73,32 +73,19 @@ class FactureProduitController extends Controller
                 "remise"=>$request->remise[$row],
                 "montant"=>$request->montant[$row],
             ]);
-            $stock = Produit::join("stocks","produits.id","=","stocks.produit_id")
-            ->select('stocks.produit_id',"stocks.entre","stocks.sortie","stocks.reste")
-            ->where("stocks.produit_id",$request->pro[$row])
-            ->first();
-            if(isset($stock)){
-                Produit::join("stocks","produits.id","=","stocks.produit_id")
-                ->select('stocks.produit_id',"stocks.reste","stocks.sortie","produits.quantite")
-                ->where("stocks.produit_id",$request->pro[$row])
-                ->update([
-                    "sortie"=>$request->quantite[$row] + $stock->sortie,
-                    "reste"=>$stock->entre - ($request->quantite[$row] + $stock->sortie),
-                    "quantite"=>$stock->entre - ($request->quantite[$row] + $stock->sortie),
-                ]);
-            }
+
 
         }
         // let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
 
-        $ht = $request->ht_new + $facture->prix_ht;
-        $ttc = ($ht + ($ht * ($facture->taux_tva/100))) * (1 - ($facture->remise / 100));
-        Facture::where("id",$request->facture_id)->update([
-            "prix_ttc"=>$ttc,
-            "prix_ht"=>$ht,
-            "reste"=>$ttc,
-        ]);
-
+        // $ht = $request->ht_new + $facture->prix_ht;
+        // $ttc = ($ht + ($ht * ($facture->taux_tva/100))) * (1 - ($facture->remise / 100));
+        // Facture::where("id",$request->facture_id)->update([
+        //     "prix_ttc"=>$ttc,
+        //     "prix_ht"=>$ht,
+        //     "reste"=>$ttc,
+        // ]);
+        toast("L'enregistrement des produits effectuée","success");
         return back();
 
     }
@@ -148,7 +135,7 @@ class FactureProduitController extends Controller
 
 
         $factureProduit->update([
-            "produit_id"=>$request->produit_u,
+            "produit_id"=>$request->pro_id,
             "quantite"=>$request->quantite_u,
             "remise"=>$request->remise_u,
             "montant"=> $request->remise_u <= 0 ? $montant : $montant_remise,

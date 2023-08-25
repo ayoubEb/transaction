@@ -18,6 +18,7 @@ class CreateCustomizeFacturesTable extends Migration
             $table->string("reference")->nullable();
             $table->integer("numero")->nullable();
             $table->integer("tva")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

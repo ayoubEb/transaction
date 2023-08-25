@@ -20,6 +20,7 @@ class CreateTransactionsTable extends Migration
             $table->date("date_transaction")->nullable();
             $table->double("montant")->nullable();
             $table->text('remarque')->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

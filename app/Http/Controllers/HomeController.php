@@ -43,10 +43,29 @@ class HomeController extends Controller
         $count_stock = Stock::count();
         $count_stock_today = Stock::where("created_at",Carbon::today())->count();
 
+
+
         // liste
         $transactions = Transaction::select("client_id","remarque","montant")->get();
+        $factures = Facture::select(
+            "id",
+            "client_id",
+            "num_facture",
+            "statut",
+            "prix_ht",
+            "prix_ttc",
+            "taux_tva",
+            "remise",
+            "etat_paiement",
+            "payer",
+            "reste",
+            "date"
+            )
+            ->get();
         $transactions_today = Transaction::select("client_id","remarque","montant","created_at")->whereDate("created_at","=",Carbon::today())->get();
         $stocks = Stock::select("produit_id","entre","sortie","reste","date_stock","min","initial","reserverValider","reserverAttente","num")->latest()->take(8)->get();
+
+        
 
         $reservation = Stock::select('produit_id',"num","reserverAttente","reserverValider")->get();
         return view('home',[
@@ -66,7 +85,8 @@ class HomeController extends Controller
             "transactions_today"=>$transactions_today,
 
             "stocks"=>$stocks,
-            "reservation"=>$reservation
+            "reservation"=>$reservation,
+            "factures"=>$factures
         ]);
     }
 }

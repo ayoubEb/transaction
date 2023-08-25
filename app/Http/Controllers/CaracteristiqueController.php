@@ -93,19 +93,10 @@ class CaracteristiqueController extends Controller
      * @param  \App\Models\Caracteristique  $caracteristique
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Caracteristique $caracteristique,Request $request)
+    public function destroy(Caracteristique $caracteristique)
     {
-        if(isset($request->force)){
-            $caracteristique->forceDelete();
-
-            toast("La suppression du caractéristique effectuée","success");
-        }
-        else
-        {
-            $caracteristique->delete();
-            toast("La déplacement du corbeille du caractéristique effectuée","success");
-
-        }
+        $caracteristique->delete();
+        toast("La déplacement du corbeille du caractéristique effectuée","success");
         return back();
     }
 }

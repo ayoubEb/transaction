@@ -4,16 +4,43 @@
 @endsection
 @section('content')
 @include('sweetalert::alert')
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+      <li class="breadcrumb-item active" aria-current="page">Liste des produits</li>
+    </ol>
+</nav>
 
 <div class="card">
     <div class="card-body p-2">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-3">
+                        @can("produit-create")
+                            <a href="{{ route('produit.create') }}" class="btn btn-primary w-100">
+                                <span class="mdi mdi-plus-circle-outline align-middle"></span>
+                                Ajouter
+                            </a>
+                        @endcan
+
+                    </div>
+                    <div class="col-lg-5">
+                        <button type="button" class="btn btn-primary w-100"  data-bs-toggle="modal" data-bs-target="#addRapide">
+                            <span class="mdi mdi-plus-circle-outline align-middle"></span>
+                            <span class="text-uppercase fs-12"> Ajouter une produit rapidement</span>
+
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="d-flex justify-content-center mb-3">
             @can("produit-create")
-                <a href="{{ route('produit.create') }}" class="btn btn-primary btn-sm">
-                    <span class="mdi mdi-plus-circle-outline align-middle"></span>
-                    Ajouter
-                </a>
             @endcan
+
         </div>
             <div class="table-responsive">
                 <table id="datatable" class="table table-bordered mb-0 table-sm datatable">
@@ -22,10 +49,11 @@
                             <th>Référrence</th>
                             <th>code</th>
                             <th>Désignation</th>
-                            <th>Prix d'achat</th>
-                            <th>Prix de vente</th>
-                            <th>Prix revients</th>
+                            <th>P.d'achat</th>
+                            <th>P.vente</th>
+                            <th>P.revients</th>
                             <th>Quantite</th>
+                            <th>statut</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -33,23 +61,35 @@
                         @forelse ($produits as $produit)
                             <tr>
                                 <td class="align-middle">
-                                    @can("produit-show")
-                                        <button type="button" class="btn p-0 bg-transparent border-0 text-primary fw-bolder" data-bs-toggle="modal" data-bs-target="#show{{ $produit->id }}">
-                                            {{ $produit->reference ?? '' }}
-                                        </button>
-                                    @else
-                                        <h6 class="m-0 text-center text-primary">
-
-                                            {{ $produit->reference ?? '' }}
-                                        </h6>
-                                    @endcan
+                                    {{ $produit->reference ?? '' }}
                                 </td>
                                 <td class="align-middle">{{ $produit->code }}</td>
                                 <td class="align-middle">{{ $produit->designation }}</td>
-                                <td class="align-middle fw-bolder">{{ $produit->prix_achat." DH" }}</td>
-                                <td class="align-middle fw-bolder">{{ $produit->prix_vente." DH" }}</td>
-                                <td class="align-middle fw-bolder">{{ $produit->prix_revient." DH" }}</td>
-                                <td class="align-middle">{{ $produit->quantite }}</td>
+                                <td class="align-middle fw-bolder">{{ $produit->prix_achat ?? 0 }} DH</td>
+                                <td class="align-middle fw-bolder">{{ $produit->prix_vente ?? 0 }} DH</td>
+                                <td class="align-middle fw-bolder">{{ $produit->prix_revient ?? 0 }} DH</td>
+                                <td class="align-middle">
+                                   <span @class([
+                                            'badge',
+                                            'bg-danger' => $produit->quantite == 0,
+                                            'bg-success' => $produit->quantite != 0,
+                                        ])>
+                                       {{ $produit->quantite ?? 'aucun' }}
+                                   </span>
+                                </td>
+                                <td class="align-middle">
+                                   <span
+                                   @class([
+                                            'badge',
+                                            'bg-success' => date("Y-m-d",strtotime($produit->created_at)) ==  Carbon\Carbon::now()->format('Y-m-d'),
+                                            'bg-danger' => date("Y-m-d",strtotime($produit->created_at)) <  Carbon\Carbon::now()->format('Y-m-d'),
+                                            // 'bg-success' => $produit->quantite != 0,
+                                        ])>
+
+                                       {{ date("Y-m-d",strtotime($produit->created_at)) ==  Carbon\Carbon::now()->format('Y-m-d') ? "nouveau":"déja" }}
+                                   </span>
+
+                                </td>
                                 <td class="align-middle">
                                     @can("produit-edit")
                                         <a href="{{ route('produit.edit',$produit) }}" class="btn p-0 bg-transparent border-0 text-primary">
@@ -64,6 +104,11 @@
                                     @can("produit-show")
                                         <button type="button" class="btn p-0 bg-transparent border-0 text-warning" data-bs-toggle="modal" data-bs-target="#montant{{ $produit->id }}">
                                             <i class="ti-menu" style="font-size: 0.90rem;"></i>
+                                        </button>
+                                    @endcan
+                                    @can("produit-show")
+                                        <button type="button" class="btn p-0 bg-transparent border-0 text-primary fw-bolder" data-bs-toggle="modal" data-bs-target="#show{{ $produit->id }}">
+                                            <i class="ti ti-info"></i>
                                         </button>
                                     @endcan
                                 </td>
@@ -85,6 +130,78 @@
     </div>
 </div>
 
+<div class="modal fade" id="addRapide" tabindex="-1" aria-labelledby="varyingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary py-2">
+                <h6 class="modal-title m-0 text-white" id="varyingModalLabel">Ajouter une produit rapidement</h6>
+                <button type="button" class="btn btn-transparent p-0 border-0 text-white" data-bs-dismiss="modal" aria-label="btn-close">
+                    <span class="mdi mdi-close-thick"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{route('produit.rapidement')}}" method="post">
+                    @csrf
+                    <div class="row row-cols-2">
+                        <div class="col mb-2">
+                            <div class="form-group">
+                                <label for="" class="form-label">Code</label>
+                                <input type="text" name="code" id="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col mb-2">
+                            <div class="form-group">
+                                <label for="" class="form-label">Référence</label>
+                                <input type="text" name="reference" id="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col mb-2">
+                            <div class="form-group">
+                                <label for="" class="form-label">Désignation</label>
+                                <input type="text" name="designation" id="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col mb-2">
+                            <div class="form-group">
+                                <label for="" class="form-label">Prix vente</label>
+                                <input type="text" name="prix_vente" id="" step="any" min="0"  class="form-control">
+                            </div>
+                        </div>
+                        <div class="col mb-2">
+                            <div class="form-group">
+                                <label for="" class="form-label">Prix achat</label>
+                                <input type="text" name="prix_achat" step="any" min="0"  id="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col mb-2">
+                            <div class="form-group">
+                                <label for="" class="form-label">Prix revient</label>
+                                <input type="number" name="prix_revient" step="any" min="0" id="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col mb-2">
+                            <div class="form-group">
+                                <label for="" class="form-label">Quantite</label>
+                                <input type="number" name="quantite" id="" min="1" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label for="" class="form-label">Description</label>
+                                <textarea name="description" id=""  rows="10" class="form-control"></textarea>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                       <button type="submit" class="btn btn-success">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     @foreach ($produits as $produit)
 
@@ -95,16 +212,10 @@
                         <form action="{{ route('produit.destroy',$produit) }}" method="POST">
                             @csrf
                             @method("DELETE")
-                            <h3 class="text-primary mb-3 text-center">Confirmer la suppression</h3>
+                            <h3 class="text-primary mb-3 textx-center">Confirmer la suppression</h3>
                             <h6 class="mb-2 fw-bolder text-center text-muted">
                                 Voulez-vous vraiment déplacer du produit vers la corbeille
                             </h6>
-                            <div class="d-flex justify-content-center mb-2">
-                                <div class="form-check">
-                                    <input type="checkbox" name="force" id="del{{$produit->id}}" class="form-check-input">
-                                    <label for="del{{$produit->id}}" class="form-check-label fw-bolder">Ignorer la corbeille et supprimer définitivement du produit</label>
-                                </div>
-                            </div>
                             <h6 class="text-danger mb-2 text-center">{{ $produit->designation }}</h6>
                             <div class="d-flex justify-content-center">
                                 <button type="submit" class="btn btn-primary px-5 fw-bolder py-2 me-2">
@@ -122,7 +233,7 @@
         </div>
 
         <div class="modal fade" id="show{{ $produit->id }}" tabindex="-1" aria-labelledby="varyingModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog modal-md">
                 <div class="modal-content">
                     <div class="modal-header bg-primary py-2">
                         <h6 class="modal-title m-0 text-white" id="varyingModalLabel">Produit : {{ $produit->reference }}</h6>
@@ -131,182 +242,62 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row mb-2">
-                            <div class="col">
-                                <div class="table-reponsive">
-                                    <table class="table table-borderedless table-sm m-0 ">
-                                        <tbody>
-                                            <tr class="bg-warning">
-
-                                                <td colspan="2" class="text-center text-uppercase fw-bolder py-4"> {{ $produit->designation ?? ""}} </td>
-                                            </tr>
-                                            <tr>
-                                                <th class="bg-light col-4">Référence</th>
-                                                <td> {{ $produit->reference ?? ""}} </td>
-                                            </tr>
-                                            <tr>
-                                                <th class="bg-light col-4">Code</th>
-                                                <td> {{ $produit->code ?? ""}} </td>
-                                            </tr>
-
-                                            <tr>
-                                                <th class="bg-light col-4">quantite</th>
-                                                <td> {{ $produit->quantite ?? ""}} </td>
-                                            </tr>
-                                            <tr>
-                                                <th class="bg-light col-4">prix vente</th>
-                                                <td> {{ $produit->prix_vente." DH"}} </td>
-                                            </tr>
-                                            <tr>
-                                                <th class="bg-light col-4">prix d'achat</th>
-                                                <td> {{ $produit->prix_achat." DH"}} </td>
-                                            </tr>
-                                            <tr>
-                                                <th class="bg-light col-4">prix revients</th>
-                                                <td> {{ $produit->prix_revient." DH"}} </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="col-lg-5">
-                                @if($produit->image != null)
-                                    <img src="{{ asset('/storage/images/produits/'.$produit->image) }}" alt="" class="img-fluid">
-                                @else
-                                    <img src="{{ asset('images/produit_default.png') }}" alt="" class="w-100">
-                                @endif
-                            </div>
-                        </div>
-
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active text-uppercase" style="font-variant-caps: all-petite-caps;letter-spacing:1px" data-bs-toggle="tab" href="#description{{$produit->id}}" role="tab">description</a>
+                        <ul class="list-group">
+                            <li class="list-group-item py-2px bg-secondary">
+                                <h6 class="m-0 text-uppercase fs-12 text-white text-center">
+                                    code : {{ $produit->code ?? '' }}
+                                </h6>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-uppercase" style="font-variant-caps: all-petite-caps;letter-spacing:1px" data-bs-toggle="tab" href="#catacteristique{{$produit->id}}" role="tab">caractéristiques</a>
+                            <li class="list-group-item py-2px">
+                                <h6 class="m-0 text-uppercase fs-12">
+                                    <span class="float-start">référence : </span>
+                                    <span class="float-end fw-normal"> {{ $produit->reference ?? '' }} </span>
+                                </h6>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-uppercase" style="font-variant-caps: all-petite-caps;letter-spacing:1px" data-bs-toggle="tab" href="#categorie{{$produit->id}}" role="tab">catégories</a>
+                            <li class="list-group-item py-2px">
+                                <h6 class="m-0 text-uppercase fs-12">
+                                    <span class="float-start">désignation : </span>
+                                    <span class="float-end fw-normal"> {{ $produit->designation ?? '' }} </span>
+                                </h6>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-uppercase" style="font-variant-caps: all-petite-caps;letter-spacing:1px" data-bs-toggle="tab" href="#stock{{$produit->id}}" role="tab">stock</a>
+                            <li class="list-group-item py-2px">
+                                <h6 class="m-0 text-uppercase fs-12">
+                                    <span class="float-start">désignation : </span>
+                                    <span class="float-end fw-normal"> {{ $produit->designation ?? '' }} </span>
+                                </h6>
+                            </li>
+                            <li class="list-group-item py-2px">
+                                <h6 class="m-0 text-uppercase fs-12">
+                                    <span class="float-start">quantité : </span>
+                                    <span class="float-end fw-normal"> {{ $produit->quantite ?? '' }} </span>
+                                </h6>
+                            </li>
+                            <li class="list-group-item py-2px">
+                                <h6 class="m-0 text-uppercase fs-12">
+                                    <span class="float-start">prix vente : </span>
+                                    <span class="float-end fw-normal"> {{ $produit->prix_vente ?? 0 }} DH</span>
+                                </h6>
+                            </li>
+                            <li class="list-group-item py-2px">
+                                <h6 class="m-0 text-uppercase fs-12">
+                                    <span class="float-start">prix achat : </span>
+                                    <span class="float-end fw-normal"> {{ $produit->prix_axhat ?? 0 }} DH</span>
+                                </h6>
+                            </li>
+                            <li class="list-group-item py-2px">
+                                <h6 class="m-0 text-uppercase fs-12">
+                                    <span class="float-start">prix revient : </span>
+                                    <span class="float-end fw-normal"> {{ $produit->prix_revient ?? 0 }} DH</span>
+                                </h6>
+                            </li>
+                            <li class="list-group-item py-2px">
+                                <h6 class="m-0 text-uppercase fs-12 fst-italic text-center text-muted">
+                                    {{ $produit->description }}
+                                </h6>
                             </li>
                         </ul>
-
-                        <div class="tab-content">
-                            <div class="tab-pane active p-2" id="description{{$produit->id}}" role="tabpanel">
-                                {{ $produit->description ?? '' }}
-                            </div>
-
-                            <div class="tab-pane p-2" id="catacteristique{{$produit->id}}" role="tabpanel">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-sm m-0">
-                                        <thead class="table-success">
-                                            <tr>
-                                                <th>Nom</th>
-                                                <th>valeur</th>
-                                                <th>prix</th>
-                                                <th>quanite</th>
-                                                <th>montant</th>
-                                            </tr>
-
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($produit->caracteristiques as $caracteristique)
-                                                <tr>
-                                                    <td class="align-middle"> {{ $caracteristique->caracteristique->nom }} </td>
-                                                    <td class="align-middle"> {{ $caracteristique->valeur }} </td>
-                                                    <td class="align-middle"> {{ $caracteristique->prix ?? '0' }} DH</td>
-                                                    <td class="align-middle"> {{ $caracteristique->quantite ?? '1' }}</td>
-                                                    <td class="align-middle"> {{ $caracteristique->prix * $caracteristique->quantite }} DH</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-
-
-                            <div class="tab-pane p-2" id="categorie{{$produit->id}}" role="tabpanel">
-                                <div class="row row-cols-2">
-                                    <div class="col">
-
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered m-0">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="bg-light text-center">catégories parents</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($produit->categories as $pro_categorie)
-                                                    <tr>
-                                                        <td class="align-middle">
-                                                            {{ $pro_categorie->categorie->nom }}
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                    </div>
-                                    <div class="col">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered m-0">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="bg-light text-center">sous-catégories</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($produit->sous_categories as $pro_sous)
-                                                    <tr>
-                                                        <td class="align-middle">
-                                                            {{ $pro_sous->sous->categorie->nom }}
-                                                        </td>
-                                                    </tr>
-
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="tab-pane p-2" id="stock{{$produit->id}}" role="tabpanel">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-sm m-0">
-                                        <thead class="table-success">
-                                            <tr>
-                                                <th>num</th>
-                                                <th>entre</th>
-                                                <th>sortie</th>
-                                                <th>reste</th>
-                                                <th>min</th>
-                                                <th>montant</th>
-                                            </tr>
-
-                                        </thead>
-                                        <tbody>
-
-                                                <tr>
-                                                    <td class="align-middle"> {{ $produit->stock->num ?? '' }} </td>
-                                                    <td class="align-middle"> {{ $produit->stock->entre ?? '' }} </td>
-                                                    <td class="align-middle"> {{ $produit->stock->sortie ?? '' }} </td>
-                                                    <td class="align-middle"> {{ $produit->stock->reste ?? '' }} </td>
-                                                    <td class="align-middle"> {{ $produit->stock->min ?? '' }} </td>
-                                                    <td class="align-middle"> {{ $produit->stock->montant ?? '' }} DH </td>
-                                                </tr>
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                        <div class="d-flex justify-content-center mt-2">
+                            <a href="{{ route('produit.show',$produit) }}" class="btn btn-sm btn-dark"> Plus détails </a>
                         </div>
                     </div>
                 </div>

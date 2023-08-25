@@ -22,6 +22,7 @@ class CreateFacturePaiementChequesTable extends Migration
             $table->string("numero")->nullable()->unique();
             $table->date("date_enquisement")->nullable();
             $table->date("date_cheque")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

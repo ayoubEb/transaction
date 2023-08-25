@@ -1,10 +1,20 @@
 @extends('layouts.master')
 @section('title')
-    Liste des authorisation
+    Liste des autorisation
 @endsection
 @section('content')
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Liste des autorisation
+        </li>
 
+    </ol>
+</nav>
 <div class="card">
     <div class="card-body p-2">
         <div class="d-flex justify-content-center mb-3">

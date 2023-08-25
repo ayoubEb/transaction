@@ -5,15 +5,24 @@
 @section('content')
 @include('sweetalert::alert')
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Liste des fournisseur
+
+        </li>
+    </ol>
+</nav>
 
 <div class="card">
     <div class="card-body p-2">
-        <div class="d-flex justify-content-center mb-3">
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add">
-                <span class="mdi mdi-plus-circle-outline align-middle"></span>
-                <span>Ajouter</span>
-            </button>
-        </div>
+        <button type="button" class="btn btn-primary text-uppercase mb-3" data-bs-toggle="modal" data-bs-target="#add">
+            <span class="mdi mdi-plus-circle-outline align-middle"></span>
+            <span>Ajouter</span>
+        </button>
 
         <div class="table-responsive">
             <table class="table table-bordered m-0 table-sm datatable">
@@ -274,11 +283,7 @@
                         <h6 class="mb-2 fw-bolder text-center text-muted">
                             Voulez-vous vraiment déplacer du fournisseur vers la corbeille
                         </h6>
-                        <div class="form-check">
-                            <input type="checkbox" name="force" id="del{{$fournisseur->id}}" class="form-check-input">
-                            <label for="del{{$fournisseur->id}}" class="form-check-label fw-bolder">Ignorer la corbeille et supprimer définitivement du fournisseur</label>
-                        </div>
-                        <h6 class="text-danger mb-2 text-center">{{ $fournisseur->raison_sociale }}</h6>
+                        <h6 class="text-danger mb-2 text-center">{{ $fournisseur->raison_sociale ?? '' }}</h6>
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="btn btn-primary px-5 fw-bolder py-2 me-2">
                                 Je confirme

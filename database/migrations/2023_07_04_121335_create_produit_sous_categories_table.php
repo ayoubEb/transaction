@@ -19,6 +19,7 @@ class CreateProduitSousCategoriesTable extends Migration
             $table->id();
             $table->foreignIdFor(Produit::class)->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(SousCategorie::class)->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

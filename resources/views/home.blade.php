@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-<div class="row row-cols-4">
+<div class="row row-cols-lg-4 row-cols-md-2 row-cols-1" id="widget">
     <div class="col">
         <div class="card m-0">
             <div class="card-body p-3">
@@ -154,26 +154,26 @@
                 </h6>
             </div>
             <div class="card-body p-2">
-                {{-- <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-center">
                     <ul class="list-group list-group-horizontal">
 
                         <li class="list-group-item text-success">
                             <span class="mdi mdi-arrow-left-thick text-center"></span>
-                            <h6 class="m-0"> {{$stocks->sum("entre")}} </h6>
+                            <h6 class="m-0 d-inline"> {{$stocks->sum("entre")}} </h6>
                         </li>
                         <li class="list-group-item text-success">
                             <span class="mdi mdi-arrow-up-thick text-center"></span>
-                            <h6 class="m-0"> {{$stocks->sum("entre")}} </h6>
+                            <h6 class="m-0 d-inline"> {{$stocks->sum("sortie")}} </h6>
                         </li>
                         <li class="list-group-item text-success">
                             <span class="mdi mdi-arrow-right-thick text-center"></span>
-                            <h6 class="m-0"> {{$stocks->sum("entre")}} </h6>
+                            <h6 class="m-0 d-inline"> {{$stocks->sum("reste")}} </h6>
                         </li>
 
 
 
                     </ul>
-                </div> --}}
+                </div>
 
 
                 <div class="table-responsive">
@@ -186,8 +186,8 @@
                                 <th>sortie</th>
                                 <th>min</th>
                                 <th>initial</th>
-                                <th>reserver validé</th>
-                                <th>reserver attente</th>
+                                <th>r.v</th>
+                                <th>r.a</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -236,4 +236,58 @@
     </div>
 
 </div>
+
+
+<div class="card">
+    <div class="card-header py-2px bg-success">
+        <h6 class="m-0 title text-uppercase">liste des factures</h6>
+    </div>
+    <div class="card-body p-2">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm m-0">
+                <thead>
+                    <tr>
+                        <th>client</th>
+                        <th>numéro</th>
+                        <th>ht</th>
+                        <th>ttc</th>
+                        <th>tva</th>
+                        <th>remise</th>
+                        <th>paiement</th>
+                        <th>statut</th>
+                        <th>payer</th>
+                        <th>reste</th>
+                        <th>date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($factures as $facture)
+                        <tr>
+                            <td class="align-middle">{{ $facture->client->raison_sociale ?? '' }} </td>
+                            <td class="align-middle">{{ $facture->num_facture ?? '' }} </td>
+                            <td class="align-middle">{{ $facture->prix_ht ?? '' }} </td>
+                            <td class="align-middle">{{ $facture->prix_ttc ?? '' }} </td>
+                            <td class="align-middle">{{ $facture->taux_tva ?? '' }} </td>
+                            <td class="align-middle">{{ $facture->remise ?? '' }} </td>
+                            <td class="align-middle">{{ $facture->etat_paiement ?? '' }} </td>
+                            <td class="align-middle">{{ $facture->statut ?? '' }} </td>
+                            <td class="align-middle">{{ $facture->payer ?? '' }} </td>
+                            <td class="align-middle">{{ $facture->reste ?? '' }} </td>
+                            <td class="align-middle">
+                                @if (date("Y-m-d") == date("Y-m-d",strtotime($facture->date)))
+                                     <span class="badge bg-danger fs-10 fw-bolder text-uppercase">aujourd'hui</span>
+                                @else
+                                    {{$facture->date}}
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 @endsection

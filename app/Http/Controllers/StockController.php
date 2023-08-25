@@ -17,10 +17,10 @@ class StockController extends Controller
      */
     public function index()
     {
-        $stocks = Stock::groupBy("produit_id")->get();
         $produits = Produit::select("id","reference","code","designation","prix_achat")->paginate(10);
         $produits_reference = Produit::select("reference")->get();
-        return view("catalogue.stock",[
+
+        return view("catalogue.stocks.index",[
             "produits"=>$produits,
             "references"=>$produits_reference,
         ]);
@@ -135,25 +135,19 @@ class StockController extends Controller
      */
     public function destroy(Stock $stock,Request $request)
     {
-        if(isset($request->force)){
-            $stock->forceDelete();
-            $stock->history()->forceDelete();
-            toast("La déplacement du corbeille du stock effectuée","success");
-            Produit::where("id",$stock->produit_id)->update([
-                "quantite"=>$stock->produit->quantite - $stock->entre,
-            ]);
-
-        }
-        else{
 
             $stock->delete();
             $stock->history()->delete();
             Produit::where("id",$stock->produit_id)->update([
                 "quantite"=>$stock->produit->quantite - $stock->entre,
             ]);
-        }
-        toast("La suppression du stock effectuée","success");
+
+        toast("La déplacement du corbeille du stock effectuée","success");
 
         return back();
+    }
+    public function filterReference(Request $request){
+        $produit = Produit::where("reference",$request->reference)->first();
+        return view("catalogue.stocks.filter-reference",["produit"=>$produit]);
     }
 }

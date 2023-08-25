@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:transaction-list|transaction-create|transaction-edit|transaction-destroy', ['only' => ['index']]);
+         $this->middleware('permission:transaction-create', ['only' => ['store']]);
+         $this->middleware('permission:transaction-edit', ['only' => ['update']]);
+         $this->middleware('permission:transaction-destroy', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,9 +23,12 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transactions = Transaction::all();
-        $clients = Client::all();
-        return view("transaction",compact("transactions","clients"));
+        $transactions = Transaction::select('id',"client_id","date_transaction","montant","remarque")->get();
+        $clients = Client::select('id',"raison_sociale")->get();
+        return view("transaction",[
+            "transactions"=>$transactions,
+            "clients"=>$clients
+        ]);
     }
 
     /**
@@ -104,10 +115,19 @@ class TransactionController extends Controller
      * @param  \App\Models\Transaction  $transaction
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Transaction $transaction)
+    public function destroy(Transaction $transaction, Request $request)
     {
-        $transaction->delete();
-        toast("La suppression du transaction effectuée","success");
+        if(isset($request->force))
+        {
+            $transaction->forceDelete();
+            toast("La suppression du transaction effectuée","success");
+        }
+        else
+        {
+            $transaction->delete();
+            toast("La déplacement du corbeille du transaction effectuée","success");
+        }
         return back();
+
     }
 }

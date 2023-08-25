@@ -16,6 +16,7 @@ class CreateTypeClientsTable extends Migration
         Schema::create('type_clients', function (Blueprint $table) {
             $table->id();
             $table->string("nom")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

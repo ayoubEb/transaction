@@ -18,6 +18,7 @@ class CreateGroupsTable extends Migration
             $table->string('nom')->nullable();
             $table->string('remise')->nullable();
             $table->string('statut')->default('desactiver');
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

@@ -2,28 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AmountPurchase;
-use App\Models\AmountSale;
+
 use App\Models\WeekAmount;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 
 
 class WeekAmountController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:venteSemaine-list|venteSemaine-create|venteSemaine-edit|venteSemaine-show|venteSemaine-destroy', ['only' => ['index',"show"]]);
+         $this->middleware('permission:venteSemaine-create', ['only' => ['store']]);
+         $this->middleware('permission:venteSemaine-edit', ['only' => ['update']]);
+         $this->middleware('permission:venteSemaine-destroy', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
 
 
 
         $currentDate = Carbon::now();
-        // $currentDate->startOfWeek();
         $currentDate->startOfWeek();
         $currentDate->endOfWeek();
 
@@ -35,7 +41,7 @@ class WeekAmountController extends Controller
         $start_date = $startDate->toDateString();
         $end_date = $endDate->toDateString();
 
-        $date_week = array();
+        $date_week_previous = array();
         // Loop through each day of the week
         $currentDate = $startDate;
         while ($currentDate->lt($endDate)) {
@@ -45,14 +51,32 @@ class WeekAmountController extends Controller
             // Move to the next day
             $currentDate->addDay();
         }
+        // while ($currentDate->lt($endDate)) {
+        //     // Perform your desired action for each day
+        //     $date_week_previous[]=$currentDate->format('D Y-m-d');
 
+        //     // Move to the next day
+        //     $currentDate->addDay("-6 days");
+        // }
+// dd($date_week_previous);
         $deja = WeekAmount::whereBetween("date_fin",[$start_date,$end_date])->count();
-
 
         $week_amounts = WeekAmount::all();
         return view("amounts",compact("date_week","start_date","end_date","week_amounts","deja"));
 
+    // ===================================================================
+
+
+
+
+
+
+
+
+
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -66,101 +90,43 @@ class WeekAmountController extends Controller
 
 
     // public function generer(Request $request){
+    //     // Get the year from the request (optional)
+    //     $year = $request->input('year', Carbon::today()->year);
 
+    //     // Create a Carbon instance for the first day of the specified year
+    //     $firstDayOfYear = Carbon::createFromDate($year, 1, 1)->startOfDay();
 
-    //     $currentDate = Carbon::today();
-    //     $currentDate->startOfWeek();
-    //     $currentDate->endOfWeek();
+    //     // Create a Carbon instance for the last day of the specified year
+    //     $lastDayOfYear = $firstDayOfYear->copy()->endOfYear();
 
+    //     // Initialize an array to store the weeks
+    //     $weeks = [];
 
-    //     $startDate = $currentDate->copy()->startOfWeek();
-    //     $endDate = $currentDate->copy()->endOfWeek();
+    //     // Loop through the weeks of the current year
+    //     while ($firstDayOfYear <= $lastDayOfYear) {
+    //         $weekStart = $firstDayOfYear->copy();
+    //         $weekEnd = $firstDayOfYear->copy()->endOfWeek();
 
+    //         // Store the start and end dates of the week
+    //         $weeks[] = [
+    //             'start' => $weekStart->addDay(7)->toDateString(),
+    //             'end' => $weekEnd->toDateString(),
+    //         ];
 
-    //     $start_date = $startDate->toDateString();
-    //     $end_date = $endDate->toDateString();
-
-    //     $date_week = array();
-    //     // Loop through each day of the week
-    //     $currentDate = $startDate;
-    //     while ($currentDate->lt($endDate)) {
-    //         // Perform your desired action for each day
-    //         $date_week[]=$currentDate->format('D Y-m-d');
-
-    //         // Move to the next day
-    //         $currentDate->addDay();
+    //         // Move to the next week
+    //         $firstDayOfYear->addWeek();
     //     }
 
-    //     $file_ghazala = "";
-    //     $file_amana = "";
-    //     $file_cheque = "";
-    //     $file_verse = "";
-    //     if($request->hasFile("file_ghazala")){
-    //         $destination_path = 'public/images/ghazala';
-    //         $image_ghazala = $request->file("file_ghazala");
-    //         $file_ghazala = $image_ghazala->getClientOriginalName();
-    //         $request->file("file_ghazala")->storeAs($destination_path,$file_ghazala);
-    //     }
-    //     if($request->hasFile("file_amana")){
-    //         $destination_path_amana = 'public/images/amana';
-    //         $image_amana = $request->file("file_amana");
-    //         $file_amana = $image_amana->getClientOriginalName();
-    //         $request->file("file_amana")->storeAs($destination_path_amana,$file_amana);
-    //     }
-    //     if($request->hasFile("file_cheque")){
-    //         $destination_path_cheque = 'public/images/cheque';
-    //         $image_cheque = $request->file("file_cheque");
-    //         $file_cheque = $image_cheque->getClientOriginalName();
-    //         $request->file("file_cheque")->storeAs($destination_path_cheque,$file_cheque);
-    //     }
-    //     if($request->hasFile("file_verse")){
-    //         $destination_path_verser = 'public/images/verse';
-    //         $image_verser = $request->file("file_verse");
-    //         $file_verse = $image_verser->getClientOriginalName();
-    //         $request->file("file_verse")->storeAs($destination_path_verser,$file_verse);
-    //     }
+    //     foreach($weeks as $week){
+    //         WeekAmount::create([
+    //             "date_debut"=>$week["start"],
+    //             "date_fin"=>$week["end"],
+    //         ]);
 
-    //     $resu = $request->total_vente + $request->online - ($request->total_achat + $request->amana + $request->ghazala);
-    //     $week =  WeekAmount::create([
-    //         "date_debut"=>$start_date,
-    //         "date_fin"=>$end_date,
-    //         "file_ghazala"=>$file_ghazala,
-    //         "file_amana"=>$file_amana,
-    //         "file_cheque"=>$file_cheque,
-    //         "file_verse"=>$file_verse,
-    //         "montant_amana"=>$request->amana,
-    //         "total_vente"=>$request->total_vente,
-    //         "total_achat"=>$request->total_achat,
-    //         "montant_ghazala"=>$request->ghazala,
-    //         "montant_online"=>$request->online,
-    //         "montant_cheque"=>$request->cheque,
-    //         "reste_verser"=>$resu,
-    //         "reste_final"=>$resu - $request->cheque,
-
-    //     ]);
-
-    //     foreach($date_week as $k => $row){
-    //         if(!empty($row)){
-    //            $week->sales()->create([
-    //                 "week_amount_id"=> $week->id,
-    //                 "jour"=>$request->jour[$k],
-    //                 "date_sale"=>date("Y-m-d",strtotime($row)),
-    //                 "montant"=>$request->montant_achat[$k],
-    //             ]);
-    //         }
-    //     }
-    //     foreach($date_week as $k => $row){
-    //         if(!empty($row)){
-    //            $week->purchases()->create([
-    //                 "week_amount_id"=> $week->id,
-    //                 "jour"=>$request->jour[$k],
-    //                 "date_purchase"=>date("Y-m-d",strtotime($row)),
-    //                 "title"=>$request->text[$k] ?? "",
-    //                 "montant"=>$request->montant_achat[$k],
-    //             ]);
-    //         }
     //     }
     // }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -257,21 +223,21 @@ class WeekAmountController extends Controller
                     "week_amount_id"=> $week->id,
                     "jour"=>$request->jour[$k],
                     "date_sale"=>date("Y-m-d",strtotime($row)),
-                    "montant"=>$request->montant_achat[$k],
+                    "montant"=>$request->montant_vente[$k],
                 ]);
+
+                $week->purchases()->create([
+                     "week_amount_id"=> $week->id,
+                     "jour"=>$request->jour[$k],
+                     "date_purchase"=>date("Y-m-d",strtotime($row)),
+                     "title"=>$request->text[$k] ?? "",
+                     "montant"=>$request->montant_achat[$k],
+                 ]);
+
             }
         }
-        foreach($date_week as $k => $row){
-            if(!empty($row)){
-               $week->purchases()->create([
-                    "week_amount_id"=> $week->id,
-                    "jour"=>$request->jour[$k],
-                    "date_purchase"=>date("Y-m-d",strtotime($row)),
-                    "title"=>$request->text[$k] ?? "",
-                    "montant"=>$request->montant_achat[$k],
-                ]);
-            }
-        }
+
+        toast("L'enregistrement du vente semaine effectuée","success");
         return back();
 
     }

@@ -122,7 +122,7 @@ class ClientController extends Controller
      */
     public function edit(Client $client)
     {
-        $groupes = Group::select('id','nom','remise')->paginate(3);
+        $groupes = Group::select('id','nom','remise')->paginate(8);
         $types = TypeClient::select('id','nom')->get();
         return view("clients.edit",[
             "client"=>$client,

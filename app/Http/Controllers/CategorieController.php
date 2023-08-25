@@ -27,16 +27,16 @@ class CategorieController extends Controller
     public function index()
     {
         $categories = Categorie::select('id','nom','description')->get();
-        $sous_categories = SousCategorie::select('id','nom','categorie_id')->get();
-        $categories_corbeille = Categorie::onlyTrashed()->select('id','nom')->get();
+        // $sous_categories = SousCategorie::select('id','nom','categorie_id')->get();
+        // $categories_corbeille = Categorie::onlyTrashed()->select('id','nom')->get();
         // $cat = Categorie::all();
         // dd($cat);
         // dd($categories_corbeille);
         return view('catalogue.categories',
             [
                 'categories'=>$categories,
-                'categories_corbeille'=>$categories_corbeille,
-                'sous_categories'=>$sous_categories
+                // 'categories_corbeille'=>$categories_corbeille,
+                // 'sous_categories'=>$sous_categories
             ]
         );
     }
@@ -130,20 +130,11 @@ class CategorieController extends Controller
      * @param  \App\Models\Categorie  $categorie
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Categorie $categorie,Request $request)
+    public function destroy(Categorie $categorie)
     {
-
-        if(isset($request->force)){
-            $categorie->forceDelete();
-            toast("La suppression du catégorie effectuée","success");
-        }
-        else{
-            toast("La déplacement du corbeille du catégorie effectuée","success");
-            $categorie->delete();
-
-        }
+        $categorie->delete();
+        toast("La déplacement du corbeille du catégorie effectuée","success");
         return back();
-
     }
     // public function destroyDefinitivement($id)
     // {

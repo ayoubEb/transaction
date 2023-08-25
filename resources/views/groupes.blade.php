@@ -4,18 +4,24 @@
 @endsection
 @section("content")
 @include('sweetalert::alert')
-
-
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Liste des groupes
+        </li>
+    </ol>
+</nav>
 <div class="card">
     <div class="card-body p-2">
-        <div class="d-flex justify-content-center mb-3">
-            @can("groupe-create")
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add">
-                    <span class="mdi mdi-plus-circle-outline align-middle"></span>
-                    <span>Nouveau</span>
-                </button>
-            @endcan
-        </div>
+        @can("groupe-create")
+            <button type="button" class="btn btn-primary text-uppercase fs-12 mb-2" data-bs-toggle="modal" data-bs-target="#add">
+                <span class="mdi mdi-plus-circle-outline align-middle"></span>
+                <span>Nouveau</span>
+            </button>
+        @endcan
         <div class="table-responsive">
             <table class="table table-bordered table-sm m-0 datatable">
                 <thead class="table-success">
@@ -165,13 +171,9 @@
                         <h6 class="mb-2 text-center text-muted">
                             Voulez-vous vraiment déplacer du groupe vers la corbeille
                         </h6>
-                        <div class="d-flex justify-content-center mb-2" >
-                            <div class="form-check">
-                                <input type="checkbox" name="force" id="del{{$groupe->id}}" class="form-check-input">
-                                <label for="del{{$groupe->id}}" class="form-check-label fw-bolder">Ignorer la corbeille et supprimer définitivement du groupe</label>
-                            </div>
-
-                        </div>
+                        <h6 class="mb-2 text-center fw-bolder fs-12 text-danger text-uppercase">
+                            {{ $groupe->nom ?? '' }}
+                        </h6>
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <button type="submit" class="btn btn-success btn-sm w-100">OUI</button>

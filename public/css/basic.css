@@ -1,5 +1,17 @@
 .breadcrumb {
-  background: #5A96E3;
+  background: #07393C;
+}
+.breadcrumb li, .breadcrumb a {
+  color: white;
+  text-transform: uppercase;
+}
+.breadcrumb li.active {
+  color: white;
+  font-weight: bolder;
+}
+.breadcrumb li::before {
+  padding: 0 5px 0 0 !important;
+  color: white !important;
 }
 
 .client .card-body {
@@ -15,6 +27,10 @@
 
 .fs-12 {
   font-size: 12px !important;
+}
+
+.fs-10 {
+  font-size: 10px !important;
 }
 
 .fs-13-5 {
@@ -33,10 +49,7 @@
   margin: 0 !important;
 }
 .pagination li {
-  line-height: 8px;
-}
-.pagination li.disabled {
-  line-height: 4px;
+  line-height: 20px;
 }
 .pagination li a {
   font-size: 13px;

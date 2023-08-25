@@ -6,6 +6,7 @@ use App\Models\Caracteristique;
 use Illuminate\Http\Request;
 use App\Models\Produit;
 use App\Models\Categorie;
+use App\Models\CustomizeStock;
 use App\Models\ProduitCategorie;
 use App\Models\ProduitSousCategorie;
 use App\Models\SousCategorie;
@@ -17,18 +18,18 @@ class ProduitController extends Controller
 
     function __construct()
     {
-         $this->middleware('permission:produit-list|produit-create|produit-edit|produit-delete', ['only' => ['index','show']]);
-         $this->middleware('permission:produit-create', ['only' => ['create','store']]);
-         $this->middleware('permission:produit-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:produit-destroy', ['only' => ['destroy']]);
+        $this->middleware('permission:produit-list|produit-create|produit-edit|produit-delete', ['only' => ['index','show']]);
+        $this->middleware('permission:produit-create', ['only' => ['create','store']]);
+        $this->middleware('permission:produit-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:produit-destroy', ['only' => ['destroy']]);
     }
-      /**
-       * Display a listing of the resource.
-       *
-       * @return \Illuminate\Http\Response
-       */
-      public function index()
-      {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
         $produits = Produit::get(
             [
                 "id",
@@ -40,20 +41,21 @@ class ProduitController extends Controller
                 "prix_achat",
                 "prix_revient",
                 "quantite",
-                "code"
+                "code",
+                "created_at"
             ]
         );
 
         return view('catalogue.produit.index',['produits'=>$produits]);
-      }
+    }
 
-      /**
-       * Show the form for creating a new resource.
-       *
-       * @return \Illuminate\Http\Response
-       */
-      public function create()
-      {
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
         $categories = Categorie::get(['id','nom']);
         $sous_categories = sousCategorie::get(['id','nom']);
         $caracteristiques = Caracteristique::get(
@@ -69,16 +71,16 @@ class ProduitController extends Controller
                 "caracteristiques"=>$caracteristiques
             ]
         );
-      }
+    }
 
-      /**
-       * Store a newly created resource in storage.
-       *
-       * @param  \Illuminate\Http\Request  $request
-       * @return \Illuminate\Http\Response
-       */
-      public function store(Request $request)
-      {
+    /**
+        * Store a newly created resource in storage.
+        *
+        * @param  \Illuminate\Http\Request  $request
+        * @return \Illuminate\Http\Response
+    */
+    public function store(Request $request)
+    {
         $request->validate([
           "reference"=>["required","unique:produits,reference"],
           "designation"=>["required"],
@@ -154,27 +156,27 @@ class ProduitController extends Controller
         }
         toast("L'enregistrement du produit effectuée","success");
         return redirect()->route('produit.index');
-      }
+    }
 
-      /**
-       * Display the specified resource.
-       *
-       * @param  \App\Models\Produit  $produit
-       * @return \Illuminate\Http\Response
-       */
-      public function show($id)
-      {
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Produit  $produit
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Produit $produit)
+    {
+           return view("catalogue.produit.show",["produit"=>$produit]);
+    }
 
-      }
-
-      /**
-       * Show the form for editing the specified resource.
-       *
-       * @param  \App\Models\produit  $produit
-       * @return \Illuminate\Http\Response
-       */
-      public function edit(Produit $produit)
-      {
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\produit  $produit
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Produit $produit)
+    {
         $categories = Categorie::select('id','nom')->get();
         $sous_categories = SousCategorie::select('id','nom')->get();
 
@@ -185,23 +187,23 @@ class ProduitController extends Controller
             ]
         );
         return view("catalogue.produit.edit",
-            [
-                "produit"=>$produit,
-                "categories"=>$categories,
-                "sous_categories"=>$sous_categories,
-                "caracteristiques"=>$caracteristiques,
-            ]);
-      }
+        [
+            "produit"=>$produit,
+            "categories"=>$categories,
+            "sous_categories"=>$sous_categories,
+            "caracteristiques"=>$caracteristiques,
+        ]);
+    }
 
-      /**
-       * Update the specified resource in storage.
-       *
-       * @param  \Illuminate\Http\Request  $request
-       * @param  \App\Models\Produit  $produit
-       * @return \Illuminate\Http\Response
-       */
-      public function update(Request $request, Produit $produit)
-      {
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Produit  $produit
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Produit $produit)
+    {
         $request->validate([
           "reference"=>["required"],
           "designation"=>["required"],
@@ -211,63 +213,84 @@ class ProduitController extends Controller
 
         if (File::exists(storage_path().'/app/public/images/produits/'.$produit->image)) {
           File::delete(storage_path().'/app/public/images/produits/'.$produit->image);
-          }
+        }
         $img_produit = "";
-            if($request->hasFile("img")){
+        if($request->hasFile("img"))
+        {
             $destination_path_produit = 'public/images/produits';
             $image_produit = $request->file("img");
             $img_produit = $image_produit->getClientOriginalName();
             $request->file("img")->storeAs($destination_path_produit,$img_produit);
         }
 
-            $produit->update([
+        $produit->update([
+            "image"=>$img_produit ?? "",
+            "reference"=>Str::upper($request->reference),
+            "designation"=>Str::upper($request->designation),
+            "description"=>$request->description,
+            "prix_vente"=>$request->prix_vente,
+            "prix_achat"=>$request->prix_achat,
+            "code"=>Str::upper($request->code),
+            "prix_revient"=>$request->prix_revient,
+        ]);
 
-              "image"=>$img_produit ?? "",
-              "reference"=>Str::upper($request->reference),
-              "designation"=>Str::upper($request->designation),
-              "description"=>$request->description,
-              "prix_vente"=>$request->prix_vente,
-              "prix_achat"=>$request->prix_achat,
-              "code"=>$request->prix_revient,
-              "prix_revient"=>$request->code,
-            ]);
-
-            $stock =  Stock::where("produit_id",$produit->id)->first();
-            // Stock::where("produit_id",$produit->id)->update([
-            //     "entre"=>$stock->entre
-            // ]);
-            toast("La motification du produit effectuée","success");
-            return back();
-      }
-
-      /**
-       * Remove the specified resource from storage.
-       *
-       * @param  \App\Models\Produit  $produit
-       * @return \Illuminate\Http\Response
-       */
-      public function destroy(Produit $produit,Request $request)
-      {
-        if(isset($request->force)){
-            $produit->forceDelete();
-            $produit->categories()->forceDelete();
-            $produit->sous_categories()->forceDelete();
-            if (File::exists(storage_path().'/app/public/images/produits/'.$produit->image)) {
-                File::delete(storage_path().'/app/public/images/produits/'.$produit->image);
-            }
-            toast("La suppression du produit effectuée","success");
-        }
-        else{
-            $produit->delete();
-            $produit->categories()->delete();
-            $produit->sous_categories()->delete();
-            $produit->delete();
-            toast("La déplacement du corbeille du produit effectuée","success");
-
-        }
+        // $stock =  Stock::where("produit_id",$produit->id)->first();
+        toast("La motification du produit effectuée","success");
         return back();
-      }
-    //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Produit  $produit
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Produit $produit)
+    {
+        $produit->delete();
+        $produit->categories()->delete();
+        $produit->sous_categories()->delete();
+        $produit->stock()->delete();
+        toast("La déplacement du corbeille du produit effectuée","success");
+        // if (File::exists(storage_path().'/app/public/images/produits/'.$produit->image)) {
+        //     File::delete(storage_path().'/app/public/images/produits/'.$produit->image);
+        // }
+        // toast("La suppression du produit effectuée","success");
+
+        return back();
+    }
+
+    public function produitRapidement(Request $request)
+    {
+        $produit = Produit::create([
+            "reference"=>$request->reference,
+            "code"=>$request->code,
+            "description"=>$request->description,
+            "prix_vente"=>$request->prix_vente,
+            "prix_achat"=>$request->prix_achat,
+            "prix_revient"=>$request->prix_revient,
+            "quantite"=>$request->quantite,
+        ]);
+
+        $customize_stock = CustomizeStock::select("reference","numero")->first();
+        $count_stock = Stock::count();
+        $reference = $count_stock + $customize_stock->numero;
+        Stock::create([
+            "produit_id"=>$produit->id,
+            "num"=>$customize_stock->reference.$reference,
+            "entre"=>$request->quantite,
+            "sortie"=>0,
+            "reste"=>$request->quantite,
+            "initial"=>$request->quantite,
+            "min"=>1,
+        ]);
+        toast("L'enregsitrement du produit effectuée","success");
+        return back();
+    }
+
+
+    // produitRapidement
+
 }
 
 

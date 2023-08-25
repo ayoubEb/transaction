@@ -16,22 +16,17 @@ class GroupSeeder extends Seeder
     {
         $data = [
             [
-                "nom"=>"société",
+                "nom"=>"Administration",
+                "remise"=>10,
+                "statut"=>"activer",
+            ],
+            [
+                "nom"=>"commerce en gros",
                 "remise"=>0,
                 "statut"=>"activer",
             ],
             [
-                "nom"=>"particulier",
-                "remise"=>0,
-                "statut"=>"activer",
-            ],
-            [
-                "nom"=>"groupement",
-                "remise"=>0,
-                "statut"=>"activer",
-            ],
-            [
-                "nom"=>"administration",
+                "nom"=>"Particulier",
                 "remise"=>0,
                 "statut"=>"activer",
             ],
@@ -41,7 +36,12 @@ class GroupSeeder extends Seeder
                 "statut"=>"activer",
             ],
             [
-                "nom"=>"commerce en gros",
+                "nom"=>"Revendeur",
+                "remise"=>0,
+                "statut"=>"activer",
+            ],
+            [
+                "nom"=>"Société",
                 "remise"=>0,
                 "statut"=>"activer",
             ],

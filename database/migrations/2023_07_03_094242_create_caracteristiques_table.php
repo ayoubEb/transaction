@@ -16,6 +16,7 @@ class CreateCaracteristiquesTable extends Migration
         Schema::create('caracteristiques', function (Blueprint $table) {
             $table->id();
             $table->string("nom")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

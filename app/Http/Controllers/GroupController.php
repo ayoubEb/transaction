@@ -114,34 +114,14 @@ class GroupController extends Controller
      * @param  \App\Models\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Group $group,Request $request)
+    public function destroy(Group $group)
     {
-        if(isset($request->force))
-        {
-            $group->forceDelete();
-            toast("La suppression du group effectuée","success");
-        }
-        else
-        {
-            $group->delete();
-            toast("La déplacement du corbeille du group effectuée","success");
-
-        }
+        $group->delete();
+        toast("La déplacement du corbeille du group effectuée","success");
         return back();
     }
 
 
-    public function destroyAll(Request $request)
-    {
-      $idGroupes = $request->group_id;
 
-      foreach($idGroupes as $idGroupe){
-         $Groupe= Group::where('id' ,$idGroupe)->first();
-        $Groupe->delete();
-
-      }
-      Session()->flash('delete','La suppression du group effectuée');
-      return redirect()->back();
-    }
 
 }

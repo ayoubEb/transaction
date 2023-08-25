@@ -186,114 +186,110 @@
             border: 0
         }
     </style>
-<header>
-    <div class="text-left">
-        <p>
-            <span>belpre</span>
-            <span>s.a.r.l</span>
-        </p>
+    <header>
+        <div class="text-left">
+            <p>
+                <span>belpre</span>
+                <span>s.a.r.l</span>
+            </p>
+        </div>
+        <div class="text-center">
+        </div>
+        <div class="text-right">
+            xxx
+        </div>
+    </header>
 
+    <article>
+        <img src="./images/logo.jpg" alt="">
+        <h4>facture</h4>
+        <hr>
+        <h4>
+            {{$facture->num_facture }}/{{date("Y",strtotime($facture->date))}}
+        </h4>
+    </article>
 
+    <div class="client">
+        <p>{{ $facture->client->ville ?? '' }} , le : {{ date("d / m / Y",strtotime($facture->date)) }} </p>
+        <p>client :   {{$facture->client->raison_sociale ?? ''}} </p>
+        <p>adresse :   {{$facture->client->adresse ?? ''}}, {{ $facture->client->ville ?? '' }} </p>
+        <p>ice :  {{ $facture->client->ice ?? '' }}</p>
     </div>
-    <div class="text-center">
-    </div>
-    <div class="text-right">
-        xxx
-        {{-- بيل بري --}}
-    </div>
-</header>
+    <section>
+        <div class="produits">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>designation</th>
+                        <th>qté</th>
+                        <th>code</th>
+                        <th>p.u (h.t)</th>
+                        <th>montant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($facture->produits as $facture_produit)
+                        <tr>
+                            <td> {{ $facture_produit->produit->designation ?? ''}} </td>
+                            <td> {{ $facture_produit->quantite ?? ''}} </td>
+                            <td> {{ $facture_produit->produit->code ?? ''}} </td>
+                            <td> {{ $facture_produit->produit->prix_vente ?? ''}} </td>
+                            <td> {{ $facture_produit->montant ?? ''}} </td>
+                        </tr>
 
-<article>
-    <img src="./images/logo.jpg" alt="">
-    <h4>facture</h4>
-    <hr>
-    <h4>
-        {{$facture->num_facture }}/{{date("Y",strtotime($facture->date))}}
-    </h4>
+                    @endforeach
+                    @for ($i = 0; $i < 20 - count($facture->produits); $i++)
+                        <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        </tr>
+                    @endfor
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" rowspan="3">
+                            <h5>Arrête la présente facture à la somme de :</h5>
+                            <h5>{{ $letter_chiffre }} DHS</h5>
+                        </th>
+                        <th>total h.t</th>
+                        <th> {{ $facture->prix_ht }} </th>
+                    </tr>
+                    <tr>
+                        <th>dont tva 20%</th>
+                        <th> {{ $facture->prix_ht }} </th>
+                    </tr>
+                    <tr>
+                        <th>total t.t.c</th>
+                        <th> {{ $facture->prix_ttc }} </th>
+                    </tr>
 
-</article>
+                </tfoot>
+            </table>
 
-<div class="client">
-    <p>{{ $facture->client->ville ?? '' }} , le : {{ date("d / m / Y",strtotime($facture->date)) }} </p>
-    <p>client :   {{$facture->client->raison_sociale ?? ''}} </p>
-    <p>adresse :   {{$facture->client->adresse ?? ''}}, {{ $facture->client->ville ?? '' }} </p>
-    <p>ice :  {{ $facture->client->ice ?? '' }}</p>
-</div>
-<section>
-    <div class="produits">
+        </div>
+        {{-- <div class="chiffre">
+            <p>{{ $letter_chiffre }} DHS</p>
+        </div>
+        <hr> --}}
+    </section>
+    <footer>
         <table class="table">
-            <thead>
-                <tr>
-                    <th>designation</th>
-                    <th>qté</th>
-                    <th>code</th>
-                    <th>p.u (h.t)</th>
-                    <th>montant</th>
-                </tr>
-            </thead>
             <tbody>
-                @foreach ($facture->produits as $facture_produit)
-                    <tr>
-                        <td> {{ $facture_produit->produit->designation ?? ''}} </td>
-                        <td> {{ $facture_produit->quantite ?? ''}} </td>
-                        <td> {{ $facture_produit->produit->code ?? ''}} </td>
-                        <td> {{ $facture_produit->produit->prix_vente ?? ''}} </td>
-                        <td> {{ $facture_produit->montant ?? ''}} </td>
-                    </tr>
-
-                @endforeach
-                @for ($i = 0; $i < 20 - count($facture->produits); $i++)
-                    <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    </tr>
-                @endfor
+                <tr>
+                    <td> {{ $facture->entreprise->adresse ?? '' }} - {{ $facture->entreprise->ville ?? '' }} - Tél : {{ $facture->entreprise->telephone ?? '' }} </td>
+                </tr>
+                <tr>
+                    <td>RC : {{ $facture->entreprise->rc ?? '' }} - N° : {{ $facture->entreprise->email ?? '' }} - Patente : {{ $facture->entreprise->patente ?? '' }} </td>
+                </tr>
+                <tr>
+                    <td>ICE : {{ $facture->entreprise->ice ?? '' }} - email : {{ $facture->entreprise->email ?? '' }} / {{ $facture->entreprise->site ?? '' }} </td>
+                </tr>
             </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="3" rowspan="3">
-                        <h5>Arrête la présente facture à la somme de :</h5>
-                        <h5>{{ $letter_chiffre }} DHS</h5>
-                    </th>
-                    <th>total h.t</th>
-                    <th> {{ $facture->prix_ht }} </th>
-                </tr>
-                <tr>
-                    <th>dont tva 20%</th>
-                    <th> {{ $facture->prix_ht }} </th>
-                </tr>
-                <tr>
-                    <th>total t.t.c</th>
-                    <th> {{ $facture->prix_ttc }} </th>
-                </tr>
-
-            </tfoot>
         </table>
-
-    </div>
-    {{-- <div class="chiffre">
-        <p>{{ $letter_chiffre }} DHS</p>
-    </div>
-    <hr> --}}
-</section>
-<footer>
-    <table class="table">
-        <tbody>
-            <tr>
-                <td> {{ $facture->entreprise->adresse ?? '' }} - {{ $facture->entreprise->ville ?? '' }} - Tél : {{ $facture->entreprise->telephone ?? '' }} </td>
-            </tr>
-            <tr>
-                <td>RC : {{ $facture->entreprise->rc ?? '' }} - N° : {{ $facture->entreprise->email ?? '' }} - Patente : {{ $facture->entreprise->patente ?? '' }} </td>
-            </tr>
-            <tr>
-                <td>ICE : {{ $facture->entreprise->ice ?? '' }} - email : {{ $facture->entreprise->email ?? '' }} / {{ $facture->entreprise->site ?? '' }} </td>
-            </tr>
-        </tbody>
-    </table>
-</footer>
+    </footer>
 
 </body>
 </html>

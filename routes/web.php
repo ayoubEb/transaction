@@ -32,11 +32,13 @@ use App\Http\Controllers\CustomizeController;
 use App\Http\Controllers\CustomizeFactureController;
 use App\Http\Controllers\CustomizeStockController;
 use App\Http\Controllers\FacturePaiementController;
+use App\Http\Controllers\FactureRetourController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\GetDataController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LigneAchatController;
 use App\Http\Controllers\LigneBonCommandeController;
+use App\Http\Controllers\LigneFactureRetourController;
 use App\Http\Controllers\ProduitCaracteristiqueController;
 use App\Http\Controllers\ProduitCategorieController;
 use App\Http\Controllers\ProduitSousCategorieController;
@@ -47,8 +49,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WeekAmountController;
 use App\Http\Controllers\TypeClientController;
 use App\Http\Controllers\TransactionController;
-
-
 
 Route::group(['middleware' => ['auth']], function() {
 
@@ -67,7 +67,7 @@ Route::group(['middleware' => ['auth']], function() {
         "profil"=>ProfilController::class,
         "user"=>UserController::class,
         "role"=>RoleController::class,
-        "type-client"=>TypeClientController::class,
+        "typeClient"=>TypeClientController::class,
         "transaction"=>TransactionController::class,
         "sousCategorie"=>SousCategorieController::class,
         "caracteristique"=>CaracteristiqueController::class,
@@ -80,6 +80,8 @@ Route::group(['middleware' => ['auth']], function() {
         "customize-facture"=>CustomizeFactureController::class,
         "customize-stock"=>CustomizeStockController::class,
         "stockHistorique"=>StockHistoriqueController::class,
+        "factureRetour"=>FactureRetourController::class,
+        "ligneFactureRetour"=>LigneFactureRetourController::class,
 
     ]);
 
@@ -95,35 +97,45 @@ Route::controller(GetDataController::class)->group(function(){
 });
 
 
-
-
 // Route::controller(CategorieController::class)->group(function(){
 //     Route::post('/restore/{id}','restore')->name("categorie.restore");
 //     Route::delete('/destroyDefinitivement/{id}','destroyDefinitivement')->name("categorie.destrotDefini");
 // });
+Route::controller(StockController::class)->group(function(){
+    Route::get('/reference-stock','filterReference')->name("stock.reference");
+});
+Route::controller(LigneFactureRetourController::class)->group(function(){
+    Route::get('/ligneFactureRetour/{ligneFactureRetour}/pdf','pdf')->name("ligneFacture.pdf");
+});
 Route::controller(WeekAmountController::class)->group(function(){
     Route::post('/generer-weekend','generer')->name("generer");
+});
+
+Route::controller(ProfilController::class)->group(function(){
+    Route::put('/password/{profil}/update','updatePwd')->name("pwd.update");
 });
 
 Route::controller(FactureController::class)->group(function(){
     Route::put('/facture-valider/{facture}','valider')->name("facture.valider");
     Route::get('/facture-produits/{facture}','produits')->name("facture.produit");
     Route::get("/search-produits",'search_produitAdd')->name('searchProduit');
+    Route::put("/update-multiple/{facture}",'update_multiple')->name('fp.multiple');
 });
 
-Route::controller(FactureController::class)->group(function(){
-    Route::put('/validation/{facture}','statut_valider')->name("facture.statut");
-});
+
 
 Route::controller(FacturePaiementController::class)->group(function(){
     Route::get('/paiement-clients','facture_paiement')->name("paiement.facture");
     Route::get('/paiement-fiches','client_paiement')->name("paiement.client");
     Route::get('/information-paiement-client/{client}','cp_details')->name("paycli.details");
 });
+Route::controller(ProduitController::class)->group(function(){
+    Route::post('/produit-rapidement/create','produitRapidement')->name("produit.rapidement");
+});
 
 
 
-Route::post("/categorie-product",[CategorieController::class,"add_product"])->name("add.product");
+
 
 Route::get('/',[HomeController::class,'index'])->name('home');
 

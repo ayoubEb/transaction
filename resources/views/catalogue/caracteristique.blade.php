@@ -5,19 +5,27 @@ Liste des caractéristiques
 @section('content')
 @include('sweetalert::alert')
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Liste des caractéristiques
 
+        </li>
+    </ol>
+</nav>
 
 
 <div class="card">
     <div class="card-body p-2">
-        <div class="d-flex justify-content-center mb-3">
-            @can("caracteristique-create")
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add">
-                    <span class="mdi mdi-plus-circle-outline align-middle"></span>
-                    <span>Ajouter</span>
-                </button>
-            @endcan
-        </div>
+        @can("caracteristique-create")
+            <button type="button" class="btn btn-primary text-uppercase mb-3 px-5" data-bs-toggle="modal" data-bs-target="#add">
+                <span class="mdi mdi-plus-circle-outline align-middle"></span>
+                <span>Ajouter</span>
+            </button>
+        @endcan
         <div class="table-responsive">
             <table class="table table-bordered table-sm m-0 datatable" >
                 <thead class="table-primary">
@@ -60,7 +68,7 @@ Liste des caractéristiques
             <div class="modal-content">
                 <div class="modal-header bg-primary py-2">
                     <h6 class="modal-title text-white m-0" id="varyingModalLabel">Modifier la caractéristique : {{ $caracteristique->nom }}</h6>
-                    <button type="button" class="btn btn-transparent p-0 text-white" data-bs-dismiss="modal" aria-label="btn-close">
+                    <button type="button" class="btn btn-transparent p-0 text-white border-0" data-bs-dismiss="modal" aria-label="btn-close">
                         <span class="mdi mdi-close-thick"></span>
                     </button>
                 </div>
@@ -99,10 +107,6 @@ Liste des caractéristiques
                         <h6 class="mb-2 fw-bolder text-center text-muted">
                             Voulez-vous vraiment déplacer du caracteristique vers la corbeille
                         </h6>
-                        <div class="form-check">
-                            <input type="checkbox" name="force" id="del{{$caracteristique->id}}" class="form-check-input">
-                            <label for="del{{$caracteristique->id}}" class="form-check-label fw-bolder">Ignorer la corbeille et supprimer définitivement du caracteristique</label>
-                        </div>
                         <h6 class="text-danger mb-2 text-center">{{ $caracteristique->nom }}</h6>
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="btn btn-primary px-5 fw-bolder py-2 me-2">
@@ -128,7 +132,7 @@ Liste des caractéristiques
         <div class="modal-content">
             <div class="modal-header bg-primary py-2">
                 <h6 class="modal-title m-0 text-white" id="varyingModalLabel">Ajouter des caractéristiques</h6>
-                <button type="button" class="btn btn-transparent p-0 text-white" data-bs-dismiss="modal" aria-label="btn-close">
+                <button type="button" class="btn btn-transparent p-0 text-white border-0" data-bs-dismiss="modal" aria-label="btn-close">
                     <span class="mdi mdi-close-thick"></span>
                 </button>
             </div>

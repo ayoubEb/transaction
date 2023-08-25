@@ -60,7 +60,7 @@
                                     <a href="{{ route('fournisseur.index') }}">Fournisseur</a>
                                 </li>
                             @endcan
-                    
+
 
                         </ul>
                     </li>
@@ -92,8 +92,6 @@
                         </a>
                     </li>
                     @endcan
-
-
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="dripicons-suitcase"></i>
@@ -103,6 +101,11 @@
                             @can('facture-list')
                                 <li>
                                     <a href="{{ route('facture.index') }}">Factures</a>
+                                </li>
+                            @endcan
+                            @can('avoire-list')
+                                <li>
+                                    <a href="{{ route('ligneFactureRetour.index') }}">Avoires</a>
                                 </li>
                             @endcan
 
@@ -146,9 +149,9 @@
                                 <a href="{{ route('entreprise.index') }}">Entreprise</a>
                             </li>
                             @endcan
-                            @can('type-client-list')
+                            @can('typeClient-list')
                             <li>
-                                <a href="{{route('type-client.index')}}">Type client</a>
+                                <a href="{{route('typeClient.index')}}">Type client</a>
                             </li>
                             @endcan
                         </ul>
@@ -216,7 +219,7 @@
 
 
 
-                    @can('vente-semaine-list')
+                    @can('venteSemaine-list')
                     <li>
                         <a href="{{ route('week-amount.index') }}" class="waves-effect">
                             <i class="mdi mdi-currency-usd"></i>

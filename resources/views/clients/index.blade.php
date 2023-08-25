@@ -4,17 +4,25 @@
 @endsection
 @section('content')
 @include('sweetalert::alert')
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Liste des clients
+        </li>
+    </ol>
+</nav>
 
 <div class="card">
     <div class="card-body p-2">
-        <div class="d-flex justify-content-center mb-3">
-            @can('client-create')
-                <a href="{{ route('client.create') }}" class="btn btn-primary btn-sm">
-                    <span class="mdi mdi-plus-circle-outline align-middle"></span>
-                    <span>Nouveau</span>
-                </a>
-            @endcan
-        </div>
+        @can('client-create')
+            <a href="{{ route('client.create') }}" class="btn btn-primary px-5 mb-2">
+                <span class="mdi mdi-plus-circle-outline align-middle"></span>
+                <span>Nouveau</span>
+            </a>
+        @endcan
         <div class="table-responsive">
             <table class="table table-bordered m-0 table-sm datatable">
                 <thead class="table-success">
@@ -339,13 +347,9 @@
                     <h6 class="mb-2 text-center text-muted">
                         Voulez-vous vraiment déplacer du client vers la corbeille
                     </h6>
-                    <div class="d-flex justify-content-center mb-2" >
-                        <div class="form-check">
-                            <input type="checkbox" name="force" id="del{{$client->id}}" class="form-check-input">
-                            <label for="del{{$client->id}}" class="form-check-label fw-bolder">Ignorer la corbeille et supprimer définitivement du client</label>
-                        </div>
-
-                    </div>
+                    <h6 class="text-center mb-2 text-danger text-uppercase">
+                        {{ $client->raison_sociale ?? '' }}
+                    </h6>
                     <div class="row justify-content-center">
                         <div class="col-lg-5">
                             <button type="submit" class="btn btn-success btn-sm w-100">OUI</button>
@@ -361,7 +365,7 @@
         </div>
     </div>
 </div>
-  
+
 @endforeach
 
 

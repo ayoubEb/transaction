@@ -44,9 +44,5 @@ class Client extends Model
         return $this->hasMany(FacturePaiement::class);
     }
 
-      public function getRouteKeyName()
-      {
-        return "ice";
-      }
 
 }

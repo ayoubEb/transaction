@@ -1,9 +1,24 @@
 @extends('layouts.master')
 @section('title')
-    Modifier le client :
-    <span class="text-primary">{{ $client->raison_sociale ?? '' }}</span>
+    Modifier le client : {{ $client->raison_sociale ?? '' }}
 @endsection
 @section('content')
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">
+            <a href="{{ route('client.index') }}">
+                Liste des clients
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Modifier le client : {{ $client->raison_sociale ?? '' }}
+        </li>
+    </ol>
+</nav>
+
 @include('sweetalert::alert')
 <form action="{{ route('client.update',$client) }}" method="post">
     @csrf
@@ -11,13 +26,10 @@
 
 
     <div class="card">
-        <div class="card-header py-2px bg-success">
-            <h6 class="m-0 text-uppercase title">information général & type & groupe</h6>
-        </div>
         <div class="card-body p-3">
             <div class="row">
                 <div class="col-lg-7 col-sm-6">
-                    <h6 class="text-uppercase mb-3">
+                    <h6 class="text-uppercase mb-3 text-primary">
                         <span class="border border-end-0 border-start-0 border-top-0 border-solid border-primary border-2 pb-1">information général</span>
                     </h6>
                     <div class="row row-cols-2">
@@ -136,7 +148,7 @@
                     </div>
                 </div>
                 <div class="col">
-                    <h6 class="text-uppercase mb-4">
+                    <h6 class="text-uppercase mb-4 text-primary">
                         <span class="border border-end-0 border-start-0 border-top-0 border-solid border-primary border-2 pb-1">groupe & type</span>
                     </h6>
                     <div class="table-responsive">
@@ -181,9 +193,8 @@
                 </div>
             </div>
 
-            <div class="d-flex justify-content-between">
-                <a href="{{ route('client.index') }}" class="btn btn-primary btn-sm">Retour</a>
-                <button type="submit" class="btn btn-sm btn-success">
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-success">
                     Enregistrer
                 </button>
             </div>

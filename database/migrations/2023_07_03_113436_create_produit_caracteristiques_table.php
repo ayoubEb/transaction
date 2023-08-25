@@ -22,6 +22,7 @@ class CreateProduitCaracteristiquesTable extends Migration
             $table->string("valeur")->nullable();
             $table->integer("quantite")->nullable();
             $table->double("prix")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

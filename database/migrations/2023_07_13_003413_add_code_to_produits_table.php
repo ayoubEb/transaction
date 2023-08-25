@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnDeletedAtEntreprises extends Migration
+class AddCodeToProduitsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddColumnDeletedAtEntreprises extends Migration
      */
     public function up()
     {
-        Schema::table('entreprises', function (Blueprint $table) {
-            $table->datetime("deleted_at")->nullable();
+        Schema::table('produits', function (Blueprint $table) {
+            $table->string("code")->nullable()->unique();
         });
     }
 
@@ -25,8 +25,7 @@ class AddColumnDeletedAtEntreprises extends Migration
      */
     public function down()
     {
-        Schema::table('entreprises', function (Blueprint $table) {
-            $table->dropColumn("deleted_at");
+        Schema::table('produits', function (Blueprint $table) {
         });
     }
 }

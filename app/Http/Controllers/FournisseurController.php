@@ -125,16 +125,9 @@ class FournisseurController extends Controller
      */
     public function destroy(Fournisseur $fournisseur,Request $request)
     {
-        if(isset($request->force))
-        {
-            $fournisseur->forceDelete();
-            toast("La suppression du fournisseur effectuée","success");
-        }
-        else
-        {
-            $fournisseur->delete();
-            toast("La suppression du fournisseur effectuée","success");
-        }
+        $fournisseur->delete();
+        toast("La suppression du fournisseur effectuée","success");
+
         return back();
     }
 }

@@ -1,8 +1,23 @@
 @extends('layouts.master')
 @section('title')
-    Ajouter une authorisation
+    Ajouter une autorisation
 @endsection
 @section('content')
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">
+            <a href="{{route('role.index')}}">
+                Liste des autorisation
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Ajouter une autorisation
+        </li>
+    </ol>
+</nav>
 <div class="card">
     <div class="card-body">
         @if (count($errors) > 0)
@@ -80,18 +95,16 @@
                     </tr>
                     <tr>
                         <th class="table-success col-lg-2 col-4 align-middle">facture</th>
-                        <td class="align-middle">
-                            <div class="row row-cols-6 m-0">
+                        <td class="align-middle d-md-flex">
                                 @foreach ($factures as $facture)
-                                <div class="col mb-1 ps-1">
+
                                     <div class="form-check">
                                         <input type="checkbox" name="permission[]" id="permi{{ $facture->id }}" class="form-check-input" value="{{ $facture->id }}">
                                         <label for="permi{{ $facture->id }}" class="form-check-label">{{ Str::after($facture->name,'-') }}</label>
                                         <span class="fw-bolder text-primary">&nbsp;|&nbsp;&nbsp;</span>
                                     </div>
-                                </div>
+
                                 @endforeach
-                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -209,6 +222,42 @@
                                 <div class="form-check">
                                     <input type="checkbox" name="permission[]" id="permi{{ $type_client->id }}" class="form-check-input" value="{{ $type_client->id }}">
                                     <label for="permi{{ $type_client->id }}" class="form-check-label">{{ Str::after($type_client->name,'-') }}</label>
+                                    <span class="fw-bolder text-primary">&nbsp;|&nbsp;&nbsp;</span>
+                                </div>
+                            @endforeach
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="table-success col-lg-2 col-4">facture paiement</th>
+                        <td class="align-middle d-md-flex">
+                            @foreach ($facture_paiements as $facture_paiement)
+                                <div class="form-check">
+                                    <input type="checkbox" name="permission[]" id="permi{{ $facture_paiement->id }}" class="form-check-input" value="{{ $facture_paiement->id }}">
+                                    <label for="permi{{ $facture_paiement->id }}" class="form-check-label">{{ Str::after($facture_paiement->name,'-') }}</label>
+                                    <span class="fw-bolder text-primary">&nbsp;|&nbsp;&nbsp;</span>
+                                </div>
+                            @endforeach
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="table-success col-lg-2 col-4">stock historique</th>
+                        <td class="align-middle d-md-flex">
+                            @foreach ($stock_historiques as $stock_historique)
+                                <div class="form-check">
+                                    <input type="checkbox" name="permission[]" id="permi{{ $stock_historique->id }}" class="form-check-input" value="{{ $stock_historique->id }}">
+                                    <label for="permi{{ $stock_historique->id }}" class="form-check-label">{{ Str::after($stock_historique->name,'-') }}</label>
+                                    <span class="fw-bolder text-primary">&nbsp;|&nbsp;&nbsp;</span>
+                                </div>
+                            @endforeach
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="table-success col-lg-2 col-4">avoires</th>
+                        <td class="align-middle d-md-flex">
+                            @foreach ($avoires as $avoire)
+                                <div class="form-check">
+                                    <input type="checkbox" name="permission[]" id="permi{{ $avoire->id }}" class="form-check-input" value="{{ $avoire->id }}">
+                                    <label for="permi{{ $avoire->id }}" class="form-check-label">{{ Str::after($avoire->name,'-') }}</label>
                                     <span class="fw-bolder text-primary">&nbsp;|&nbsp;&nbsp;</span>
                                 </div>
                             @endforeach

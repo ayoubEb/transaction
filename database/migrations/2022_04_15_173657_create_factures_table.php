@@ -29,7 +29,8 @@ class CreateFacturesTable extends Migration
             $table->date('date')->nullable();
             $table->double('payer')->nullable();
             $table->double('reste')->nullable();
-
+            $table->string("retour")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

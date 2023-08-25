@@ -30,6 +30,10 @@ class CreateWeekAmountsTable extends Migration
             $table->double("montant_online")->nullable();
             $table->double("reste_final")->nullable();
             $table->double("reste")->nullable();
+            $table->double("montant_autre")->nullable();
+            $table->string("file_autre")->nullable();
+            $table->text("remarque")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

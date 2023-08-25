@@ -12,7 +12,7 @@ class FactureProduit extends Model
     use HasFactory;
     protected $table='facture_produits';
     protected $guarded = [];
- 
+
     /**
      * Get the facture that owns the FactureProduit
      *

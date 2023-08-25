@@ -23,6 +23,7 @@ class CreateFacturePaiementsTable extends Migration
             $table->double("payer")->nullable();
             $table->double("reste")->nullable();
             $table->date("date_paiement")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

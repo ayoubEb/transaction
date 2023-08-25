@@ -16,51 +16,51 @@ class SousCategorieSeeder extends Seeder
     {
         $data = [
             [
-                "categorie_id"=>11,
+                "categorie_id"=>1,
                 "nom"=>"Ordinateur",
             ],
             [
-                "categorie_id"=>11,
+                "categorie_id"=>1,
                 "nom"=>"écran pc",
             ],
             [
-                "categorie_id"=>11,
+                "categorie_id"=>1,
                 "nom"=>"Réseau pc",
             ],
             [
-                "categorie_id"=>11,
+                "categorie_id"=>1,
                 "nom"=>"Accessoires pc",
             ],
             [
-                "categorie_id"=>11,
+                "categorie_id"=>1,
                 "nom"=>"Composants pc",
             ],
             [
-                "categorie_id"=>8,
+                "categorie_id"=>4,
                 "nom"=>"Sport & fitness",
             ],
             [
-                "categorie_id"=>8,
+                "categorie_id"=>5,
                 "nom"=>"Cyclisme",
             ],
             [
-                "categorie_id"=>8,
+                "categorie_id"=>5,
                 "nom"=>"Top marque",
             ],
             [
-                "categorie_id"=>8,
+                "categorie_id"=>4,
                 "nom"=>"Natation",
             ],
             [
-                "categorie_id"=>8,
+                "categorie_id"=>3,
                 "nom"=>"Vêtements",
             ],
             [
-                "categorie_id"=>8,
+                "categorie_id"=>2,
                 "nom"=>"Football",
             ],
             [
-                "categorie_id"=>8,
+                "categorie_id"=>1,
                 "nom"=>"Musculation",
             ],
         ];

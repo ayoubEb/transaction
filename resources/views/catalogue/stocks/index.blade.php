@@ -6,9 +6,39 @@
 @endsection
 @section('content')
 @include('sweetalert::alert')
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Liste des stocks
+        </li>
+    </ol>
+</nav>
+
     <div class="card">
         <div class="card-body p-2">
+           <form action="{{ route('stock.reference') }}" method="GET" target="_blank">
 
+                <div class="row mb-2">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <select name="reference" id="" class="form-control select2">
+                                <option value="">Choisir le code</option>
+                                @foreach ($references as $pro_reference)
+                                    <option value="{{ $pro_reference->reference }}"> {{ $pro_reference->reference }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <button type="submit" class="btn btn-primary py-1px">
+                            Rechercher
+                        </button>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table table-bordered table-sm m-0">
                     <thead class="bg-primary">
@@ -20,6 +50,7 @@
                             <th class="text-white">sortie</th>
                             <th class="text-white">Reste</th>
                             <th class="text-white">initial</th>
+                            <th class="text-white">n.r</th>
                             <th class="text-white">r.v</th>
                             <th class="text-white">r.a</th>
                             <th class="text-white">Reste</th>
@@ -52,12 +83,17 @@
                                     {{ $produit->stock->initial ?? '' }}
                                 </td>
                                 <td class="align-middle">
+                                    <span class="badge bg-danger">
+                                        {{ $produit->stock->reserverRetour ?? 0 }}
+                                    </span>
+                                </td>
+                                <td class="align-middle">
                                     <span class="badge bg-success">
                                         {{ $produit->stock->reserverValider ?? 0 }}
                                     </span>
                                 </td>
                                 <td class="align-middle">
-                                    <span class="badge bg-danger">
+                                    <span class="badge bg-warning">
                                         {{ $produit->stock->reserverAttente ?? 0 }}
                                     </span>
                                 </td>
@@ -72,18 +108,18 @@
                                             </button>
                                         @endcan
                                     @else
-                                        @can('stock-history-list')
+                                        @can('stockHistory-list')
                                             <button type="button" class="btn p-0 bg-transparent border-0 text-success" data-bs-toggle="modal" data-bs-target="#history{{ $produit->id }}">
                                                 <i class="mdi mdi-history" style="font-size: 0.90rem;"></i>
                                             </button>
                                         @endcan
-                                        @can('stock-history-create')
+                                        @can('stockHistory-create')
                                             <button type="button" class="btn p-0 bg-transparent border-0 text-success" data-bs-toggle="modal" data-bs-target="#new{{ $produit->id }}">
                                                 <i class="mdi mdi-plus-thick" style="font-size: 0.90rem;"></i>
                                             </button>
                                         @endcan
 
-                                        @can('stock-history-destroy')
+                                        @can('stockHistory-destroy')
                                             <button type="button" class="btn p-0 bg-transparent border-0 text-danger" data-bs-toggle="modal" data-bs-target="#delete{{ $produit->id }}">
                                                 <i class="ti-trash" style="font-size: 0.90rem;"></i>
                                             </button>
@@ -290,11 +326,6 @@
                                 <h6 class="mb-2 fw-bolder text-center text-muted">
                                     Voulez-vous vraiment déplacer du stock vers la corbeille
                                 </h6>
-                                <div class="form-check">
-                                    <input type="checkbox" name="force" id="del{{$produit->stock->id}}" class="form-check-input">
-                                    <label for="del{{$produit->stock->id}}" class="form-check-label fw-bolder">Ignorer la corbeille et supprimer définitivement du stock</label>
-                                </div>
-
                                 <h6 class="text-danger mb-2 text-center">{{ $produit->stock->num ?? '' }}</h6>
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-primary px-5 fw-bolder py-2 me-2">

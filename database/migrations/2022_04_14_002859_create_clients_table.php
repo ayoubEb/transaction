@@ -30,6 +30,7 @@ class CreateClientsTable extends Migration
             $table->integer('code_postal')->nullable();
             $table->string('activite')->nullable();
             $table->foreignIdFor(TypeClient::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

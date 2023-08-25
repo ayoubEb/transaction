@@ -29,6 +29,7 @@ class CreateEntreprisesTable extends Migration
             $table->string('code_postal')->nullable();
             $table->string('telephone')->nullable();
             $table->string('fix')->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

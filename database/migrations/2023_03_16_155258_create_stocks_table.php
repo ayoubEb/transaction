@@ -18,7 +18,6 @@ class CreateStocksTable extends Migration
             $table->id();
             $table->foreignIdFor(Produit::class)->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string("num")->nullable()->unique();
-            $table->string("statut")->nullable();
             $table->integer("entre")->nullable();
             $table->integer("sortie")->nullable();
             $table->integer("reste")->nullable();
@@ -27,6 +26,8 @@ class CreateStocksTable extends Migration
             $table->integer("initial")->nullable();
             $table->integer("reserverValider")->nullable();
             $table->integer("reserverAttente")->nullable();
+            $table->integer("reserverRetour")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

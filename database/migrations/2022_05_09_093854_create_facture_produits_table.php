@@ -22,6 +22,8 @@ class CreateFactureProduitsTable extends Migration
             $table->integer('quantite')->default(1);
             $table->double('remise')->nullable();
             $table->double('montant')->nullable();
+            $table->integer("total_retour")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

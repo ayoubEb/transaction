@@ -3,7 +3,21 @@
     Ajouter de facture
 @endsection
 @section('content')
-
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">
+            <a href="{{route('facture.index')}}">
+                Liste des factures
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            ajouter une facture
+        </li>
+    </ol>
+</nav>
 
 <form action="{{ route('facture.store') }}" method="post">
     @csrf
@@ -124,9 +138,9 @@
         <div class="card-header bg-success">
             <h6 class="m-0 text-uppercase title">Ajouter des produits</h6>
         </div>
-        <div class="card-body p-2">
+        <div class="card-body p-2" style="height: 30rem;  overflow-y: auto;">
             <div class="table-responsive">
-                <table class="table table-sm table-bordered m-0 datatable">
+                <table class="table table-sm table-bordered m-0">
                     <thead class="table-success">
                         <tr>
 
@@ -144,11 +158,6 @@
                             <tr>
                                 <td class="align-middle">
                                     <div class="form-check fs-12">
-                                        {{-- @if ($produit->stock)
-
-                                        @else
-
-                                        @endif --}}
                                         <input type="checkbox" name="pro[]" id="p{{$produit->id}}" class="form-check-input pro" value="{{ $produit->id }}" {{  $produit->stock->reste ?? 'disabled' }}>
                                         <label for="p{{$produit->id}}" class="form-check-label">{{ $produit->reference }}</label>
                                     </div>
@@ -176,10 +185,10 @@
                 </table>
             </div>
         </div>
+        <button type="submit" class="btn btn-dark btn-sm" id="save">
+            Enregistrer
+        </button>
     </div>
-    <button type="submit" class="btn btn-dark btn-sm" id="save">
-        Enregistrer
-    </button>
 </form>
 <style>
     /* #nouveau{
@@ -317,7 +326,8 @@
             $(e.target).parent().parent().parent().children('td').children(".qte").prop("disabled",true);
             $(e.target).parent().parent().parent().children('td').children(".remise").prop("disabled",true);
             $(e.target).parent().parent().parent().children('td').children(".montant").prop("disabled",true);
-            $(e.target).parent().parent().parent().children('td').children(".montant").val(0);
+            $(e.target).parent().parent().parent().css("background-color","transparent");
+            $(e.target).parent().parent().parent().children('td').children(".montant").val();
             $(e.target).parent().parent().parent().children('td').children(".qte").val(0);
             let count_pro = $(".pro:checked").length;
             let sum = 0;

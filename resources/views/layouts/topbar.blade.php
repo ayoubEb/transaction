@@ -56,8 +56,12 @@
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
                     <a class="dropdown-item" href="{{ route('profil.show',Auth::user()) }}">
-                        <i class="dripicons-user font-size-16 align-middle me-2"></i>
+                        <i class="mdi mdi-account-circle-outline font-size-16 align-middle me-2"></i>
                         Profile
+                    </a>
+                    <a class="dropdown-item" href="{{ route('profil.edit',Auth::user()) }}">
+                        <i class="mdi mdi-cog-outline font-size-16 align-middle me-2"></i>
+                        Préférence
                     </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#"

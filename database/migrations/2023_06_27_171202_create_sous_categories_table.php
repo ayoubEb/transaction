@@ -18,6 +18,7 @@ class CreateSousCategoriesTable extends Migration
             $table->id();
             $table->foreignIdFor(Categorie::class)->constrained()->nullable()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('nom')->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

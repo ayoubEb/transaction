@@ -18,13 +18,12 @@ class CreateProduitsTable extends Migration
 
             $table->string('image')->nullable();
             $table->string('reference')->unique()->nullable();
-            $table->string('code')->unique()->nullable();
             $table->string('designation')->nullable();
             $table->text('description')->nullable();
             $table->double('prix_vente')->nullable();
             $table->double('prix_achat')->nullable();
             $table->double('prix_revient')->nullable();
-            $table->integer('quantite')->nullable();
+            $table->integer('quantite')->default(1);
             $table->timestamps();
         });
     }

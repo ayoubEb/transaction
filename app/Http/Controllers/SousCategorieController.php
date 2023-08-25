@@ -11,10 +11,10 @@ class SousCategorieController extends Controller
 
     function __construct()
     {
-         $this->middleware('permission:sous-categorie-list|sous-categorie-create|sous-categorie-edit|sous-categorie-delete', ['only' => ['index']]);
-         $this->middleware('permission:sous-categorie-create', ['only' => ['create','store']]);
-         $this->middleware('permission:sous-categorie-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:sous-categorie-destroy', ['only' => ['destroy']]);
+         $this->middleware('permission:sousCategorie-list|sousCategorie-create|sousCategorie-edit|sousCategorie-delete', ['only' => ['index']]);
+         $this->middleware('permission:sousCategorie-create', ['only' => ['create','store']]);
+         $this->middleware('permission:sousCategorie-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:sousCategorie-destroy', ['only' => ['destroy']]);
     }
 
 
@@ -90,7 +90,6 @@ class SousCategorieController extends Controller
     public function update(Request $request, SousCategorie $sousCategorie)
     {
         $sousCategorie->update([
-            "categorie_id"=>$request->categorie_u,
             "nom"=>$request->sous_u,
         ]);
         toast("La motification du sous-catégorie effectuée","success");

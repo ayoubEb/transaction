@@ -41,29 +41,46 @@ class FacturePaiementController extends Controller
     public function store(Request $request)
     {
         $facture = Facture::where("id",$request->facture_id)->first();
+        $client = Client::withTrashed()->join("factures","clients.id",'=','factures.client_id')
+        ->select("clients.id as cli","factures.id")
+        ->where('factures.id',$request->facture_id)
+        ->first()
+        ->cli;
         $facture_paiement = FacturePaiement::create([
             "facture_id"=>$facture->id,
-            "client_id"=>$facture->client->id,
+            "client_id"=>$client,
             "payer"=>$request->payer,
             "reste"=>$request->reste,
             "type_paiement"=>$request->type,
             "date_paiement"=>Carbon::now(),
         ]);
-        if($request->type == "cheque"){
+        if($request->type == "chèque"){
             FacturePaiementCheque::create([
                 "facture_paiement_id"=>$facture_paiement->id,
                 "numero"=>$request->numero,
                 "bank_id"=>$request->nom_bank,
+                "date_cheque"=>$request->date_cheque,
                 "date_enquisement"=>$request->date_enquisement,
             ]);
         }
 
         $sum_payer = FacturePaiement::where("facture_id",$facture->id)->sum("payer");
 
-        $facture->update([
-            "payer"=>$sum_payer,
-            "reste"=>$request->reste,
-        ]);
+
+        if($sum_payer == $facture->payer){
+            $facture->update([
+                "payer"=>$facture->payer + $request->payer,
+                "reste"=>$request->reste,
+                "etat_paiement"=>"en complément",
+            ]);
+        }
+        else{
+            $facture->update([
+                "payer"=>$facture->payer + $request->payer,
+                "reste"=>$request->reste,
+            ]);
+
+        }
         toast("L'enregistrement du paiement effectuée","success");
         return back();
     }

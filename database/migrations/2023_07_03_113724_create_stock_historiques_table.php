@@ -20,6 +20,7 @@ class CreateStockHistoriquesTable extends Migration
             $table->string("fonction")->nullable();
             $table->integer("quantite")->nullable();
             $table->date("date_mouvement")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
     }

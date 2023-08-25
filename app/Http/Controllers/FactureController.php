@@ -7,13 +7,11 @@ use App\Models\Facture;
 use App\Models\FactureProduit;
 use App\Models\Client;
 use App\Models\CustomizeFacture;
-use App\Models\CustomizeStock;
+
 use App\Models\Entreprise;
-use App\Models\FacturePaiement;
-use App\Models\FacturePaiementCheque;
 use App\Models\Group;
 use App\Models\Produit;
-use App\Models\Stock;
+
 use App\Models\StockHistorique;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -33,15 +31,22 @@ class FactureController extends Controller
      */
     public function index()
     {
+        $tva = CustomizeFacture::select("tva")->first();
 
-        $factures = Facture::all();
+        $factures = Facture::withTrashed()
+        ->join("clients","clients.id","factures.client_id")
+        ->select('factures.*',"clients.raison_sociale","clients.deleted_at as cli_del" )
+        ->get();
+
+        // dd($factures);
         $clients = Client::all();
         $banks = Bank::select('id',"nom_bank")->get();
-        return view('factures.index',
+        return view('ventes.factures.index',
             [
             'factures'=>$factures,
             "clients"=>$clients,
             "banks"=>$banks,
+            "tva"=>$tva
             ]
         );
     }
@@ -60,7 +65,7 @@ class FactureController extends Controller
         $entreprises = Entreprise::get(["id","raison_sociale"]);
         $banks = Bank::select("id","nom_bank")->get();
         $tva = CustomizeFacture::select("tva")->first()->tva;
-        return  view('factures.create',[
+        return  view('ventes.factures.create',[
             'clients'=>$clients,
             "entreprises"=>$entreprises,
             "groupes"=>$groupes,
@@ -80,7 +85,7 @@ class FactureController extends Controller
     public function store(Request $request)
     {
         $customize_facture = CustomizeFacture::select("reference","numero","tva")->first();
-        $count_facture = Facture::count();
+        $count_facture = Facture::withTrashed()->count();
         $reference = strval($count_facture + $customize_facture->numero);
 
         $facture = Facture::create([
@@ -103,7 +108,7 @@ class FactureController extends Controller
 
             FactureProduit::create([
                 "facture_id"=>$facture->id,
-                "produit_id"=>$value,
+                "produit_id"=>$request->pro[$k] ,
                 "quantite" => $request->quantite[$k],
                 "remise" => $request->remise[$k],
                 "montant" => $request->montant[$k],
@@ -140,7 +145,18 @@ class FactureController extends Controller
      */
     public function show(Facture $facture)
     {
+        $client = Client::withTrashed()->join("factures","clients.id","=","factures.client_id")
+                ->select("factures.id","clients.raison_sociale")
+                ->where("factures.id",$facture->id)
+                ->first();
+            // dd($client);
 
+        $produits = Produit::select("id","reference","designation","prix_vente")->get();
+        return view("ventes.factures.show",[
+            "facture"=>$facture,
+            "client"=>$client,
+            "produits"=>$produits
+        ]);
     }
       /**
      * Display the specified resource.
@@ -181,7 +197,7 @@ class FactureController extends Controller
             ->select('stocks.produit_id',"stocks.entre","stocks.sortie","stocks.reste","stocks.id","stocks.date_stock","stocks.reserverAttente")
             ->where("stocks.produit_id",$produits[$k]->produit_id)
             ->first();
-            // if(isset($stock)){
+            if(isset($stock)){
                 Produit::join("stocks","produits.id","=","stocks.produit_id")
                 ->select('stocks.produit_id',"stocks.reste","stocks.sortie","produits.quantite","stocks.reserverAttente","stocks.reserverValider")
                 ->where("stocks.produit_id",$produits[$k]->produit_id)
@@ -208,7 +224,7 @@ class FactureController extends Controller
                     "quantite"=>$produits[$k]->quantite,
                     "date_mouvement"=>Carbon::now(),
                 ]);
-            // }
+            }
         }
 
         return back();
@@ -224,7 +240,7 @@ class FactureController extends Controller
     {
 
             $produits = Produit::select("id","reference","designation","prix_vente")->get();
-        return view('factures.edit',
+        return view('ventes.factures.edit',
         [
           'facture'=>$facture,
           'produits'=>$produits,
@@ -241,17 +257,24 @@ class FactureController extends Controller
        * @param  \App\Models\Facture  $facture
        * @return \Illuminate\Http\Response
        */
-      public function update(Request $request, Facture $facture)
-      {
-       $facture->update([
-        "client_id"=>$request->client_id,
-        "statut"=>$request->statut ?? "en cours",
-        "taux_tva"=>$request->tva,
-       ]);
-       toast("La modification du facture effectuée","success");
-        return back();
+        public function update(Request $request, Facture $facture)
+        {
+            $facture->update([
+                "client_id"=>$request->client_id,
+                "statut"=>$request->statut ?? "en cours",
+                "taux_tva"=>$request->tva,
+            ]);
+            toast("La modification du facture effectuée","success");
+            if($facture->statut == "valider")
+            {
+                    return redirect()->route('facture.index');
+            }
+            else
+            {
+                return back();
+            }
 
-      }
+        }
 
     /**
      * Remove the specified resource from storage.
@@ -259,9 +282,10 @@ class FactureController extends Controller
      * @param  \App\Models\Facture  $facture
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Facture $facture, Request $request)
+    public function destroy(Facture $facture)
     {
 
+        $facture->delete();
 
         $produits = $facture->produits()->get();
         foreach($produits as $row => $val){
@@ -280,21 +304,15 @@ class FactureController extends Controller
                     "quantite"=> $stock->quantite + $produits[$row]->quantite,
                 ]);
             }
-        }
-        if(isset($request->force)){
-            $facture->forceDelete();
-            toast("La suppression du facture effectuée","success");
-        }
-        else{
-            toast("La déplacement du corbeille du facture effectuée","success");
-            $facture->delete();
+
+
 
         }
 
 
 
-        toast("La suppression du facture effectuée","success");
-        return redirect()->route('facture.index');
+        toast("La déplacement du corbeille du facture effectuée","success");
+        return back();
     }
     /**
      * update the specified resource from storage.
@@ -391,10 +409,7 @@ class FactureController extends Controller
 
       $entreprise = Entreprise::all();
       $letter_chiffre = $this->asLetters(($facture->prix_ttc));
-      $pdf = PDF::loadView('factures.showPdf',compact('facture','entreprise','letter_chiffre'));
-
-
-
+      $pdf = PDF::loadview('ventes.factures.showPdf',compact('facture','entreprise','letter_chiffre'));
       return $pdf->stream();
       // return $pdf->download('facture.pdf');
     }

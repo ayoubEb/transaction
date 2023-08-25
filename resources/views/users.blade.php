@@ -4,11 +4,21 @@
 @endsection
 @section('content')
 @include('sweetalert::alert')
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Acceuil</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Liste des utilisateurs
+        </li>
+    </ol>
+</nav>
 <div class="card">
     <div class="card-body p-2">
-        <div class="d-flex justify-content-center">
+
             @can("user-create")
-                <button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0 btn-sm px-4" data-bs-toggle="modal" data-bs-target="#add">
+                <button type="button" class="btn btn-primary btn-icon-text mb-2 text-uppercase px-5 text-uppercase" data-bs-toggle="modal" data-bs-target="#add">
                     <span class="mdi mdi-plus-circle-outline align-middle"></span>
                      <span>
                         Ajouter
@@ -16,7 +26,6 @@
                 </button>
             @endcan
 
-        </div>
             <div class="table-responsive">
                 <table class="table table-striped mb-0 datatable table-sm" >
                     <thead>
@@ -26,6 +35,7 @@
                             <th>Email</th>
                             <th>Statut</th>
                             <th>Role</th>
+                            <th>username</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -40,11 +50,15 @@
                                     {{ $user->role ?? '' }}
                                 </td>
                                 <td class="align-middle">
+                                    {{ $user->username ?? '' }}
+                                </td>
+                                <td class="align-middle">
                                     @can('user-edit')
                                         <button type="button" class="btn bg-transparent border-0 text-primary p-0" data-bs-toggle="modal" data-bs-target="#edit{{ $user->id }}">
                                             <i class="ti-pencil" style="font-size: 0.80rem"></i>
                                         </button>
                                     @endcan
+
                                     @if ($user->role != "manager")
                                         @can('user-destroy')
                                             <button type="button" class="btn bg-transparent border-0 text-primary p-0" data-bs-toggle="modal" data-bs-target="#delete{{ $user->id }}">
@@ -116,24 +130,17 @@
                         </div>
                         <div class="col mb-2">
                             <div class="form-group">
-                                <label for="" class="form-label d-block">Roles <span class="text-danger">*</span></label>
-                                {!! Form::select('roles[]', $roles,[], array('class' => 'form-control select2','multiple')) !!}
-
-                            </div>
-                        </div>
-                        <div class="col mb-2">
-                            <div class="form-group">
                                 <label for="" class="form-label">Mot de passe <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text" id="basic-addon1">
                                         <i class="toggle-password mdi mdi-eye-off-outline"></i>
                                     </span>
                                     <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" value="{{ old('password') }}">
-                                </div>
 
-                                @error("password")
-                                    <strong class="invalid-feedback">{{ $message }}</strong>
-                                @enderror
+                                    @error("password")
+                                        <strong class="invalid-feedback">{{ $message }}</strong>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="col mb-2">
@@ -147,10 +154,10 @@
                                 </div>
                             </div>
                         </div>
-
-
-
-
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="" class="form-label d-block">Roles <span class="text-danger">*</span></label>
+                        {!! Form::select('roles[]', $roles,[], array('class' => 'form-select','multiple')) !!}
                     </div>
                     <div class="form-group d-flex justify-content-center">
                         <button type="submit" class="btn btn-success py-1 px-3">
@@ -218,13 +225,6 @@
                                 </div>
                             </div>
 
-                            <div class="col mb-2">
-                                <div class="form-group">
-                                    <label for="" class="form-label d-block">Roles <span class="text-danger">*</span></label>
-                                    {!! Form::select('roles_u[]', $roles,$user->roles->pluck('name','name')->all(), array('class' => 'form-control select2','multiple')) !!}
-
-                                </div>
-                            </div>
 
 
                             <div class="col mb-2">
@@ -255,6 +255,11 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="" class="form-label d-block">Roles <span class="text-danger">*</span></label>
+                            {!! Form::select('roles_u[]', $roles,$user->roles->pluck('name','name')->all(), array('class' => 'form-select','multiple')) !!}
+
+                        </div>
 
 
 
@@ -290,13 +295,9 @@
                         <h6 class="mb-2 text-center text-muted">
                             Voulez-vous vraiment déplacer d'utilisateur vers la corbeille
                         </h6>
-                        <div class="d-flex justify-content-center mb-2" >
-                            <div class="form-check">
-                                <input type="checkbox" name="force" id="del{{$user->id}}" class="form-check-input">
-                                <label for="del{{$user->id}}" class="form-check-label fw-bolder">Ignorer la corbeille et supprimer définitivement d'utilisateur</label>
-                            </div>
-
-                        </div>
+                        <h6 class="mb-2 text-center text-danger text-uppercase fw-bolder fs-12">
+                            {{ $user->name }}
+                        </h6>
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <button type="submit" class="btn btn-success btn-sm w-100">OUI</button>

@@ -14,6 +14,7 @@ class Facture extends Model
     protected $table='factures';
     protected $guarded = [];
     use SoftDeletes;
+
     public function client(){
       return $this->belongsTo(Client::class, 'client_id');
     }
@@ -39,6 +40,16 @@ class Facture extends Model
     }
 
     /**
+     * Get the user associated with the Facture
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ligne_retours(): HasMany
+    {
+        return $this->hasMany(LigneFactureRetour::class);
+    }
+
+    /**
      * Get the entreprise that owns the Facture
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -47,8 +58,5 @@ class Facture extends Model
     {
         return $this->belongsTo(Entreprise::class, 'entreprise_id');
     }
-    public function getRouteKeyName()
-    {
-        return "num_facture";
-    }
+
 }
