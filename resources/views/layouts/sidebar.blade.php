@@ -47,6 +47,7 @@
 
                         </ul>
                     </li>
+                    @endcan
 
 
                     <li>
@@ -55,35 +56,26 @@
                             <span>Achat</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
-                            @can('user-list')
+                            @can('fournisseur-list')
                                 <li>
                                     <a href="{{ route('fournisseur.index') }}">Fournisseur</a>
+                                </li>
+                            @endcan
+                            @can('ligneAchat-list')
+                                <li>
+                                    <a href="{{ route('ligneAchat.index') }}">Liste</a>
+                                </li>
+                            @endcan
+                            @can('ligneAchat-bon')
+                                <li>
+                                    <a href="{{ route('bon.liste') }}">bon commande</a>
                                 </li>
                             @endcan
 
 
                         </ul>
                     </li>
-                    @elsecan('produit-list')
-                    <li>
-                        <a href="javascript: void(0);" class="has-arrow waves-effect">
-                            <i class="dripicons-suitcase"></i>
-                            <span>GRH</span>
-                        </a>
-                        <ul class="sub-menu" aria-expanded="false">
-                            @can('user-list')
-                            <li>
-                                <a href="{{ route('user.index') }}">Utilisateurs</a>
-                            </li>
-                            @endcan
-                            @can('role-list')
-                            <li>
-                                <a href="{{ route('role.index') }}">Rolls</a>
-                            </li>
-                            @endcan
-                        </ul>
-                    </li>
-                    @endcan
+
                     @can("client-list")
                     <li>
                         <a href="{{ route('client.index') }}" class="waves-effect">
@@ -108,8 +100,6 @@
                                     <a href="{{ route('ligneFactureRetour.index') }}">Avoires</a>
                                 </li>
                             @endcan
-
-
                         </ul>
                     </li>
 
@@ -181,7 +171,7 @@
                         </ul>
                     </li>
 
-                    @elsecan('type-client-list')
+                    @elsecan('typeClient-list')
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="dripicons-suitcase"></i>
@@ -226,6 +216,26 @@
                             <span>Vente semaine</span>
                         </a>
                     </li>
+                    @endcan
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="dripicons-suitcase"></i>
+                            <span>Paiements</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            @can('user-list')
+                            <li>
+                                <a href="{{ route('facture-paiement.index') }}">Factures</a>
+                            </li>
+                            @endcan
+                            @can('ligneAchat-list')
+                            <li>
+                                <a href="{{route('achatPaiement.index')}}">achats</a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
 
                     <li>
                         <a href="{{ route('customize.index') }}" class="waves-effect">
@@ -236,7 +246,6 @@
 
 
 
-                @endcan
 
                 </ul>
             </div>

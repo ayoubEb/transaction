@@ -201,7 +201,7 @@
     </header>
 
     <article>
-        <img src="./images/logo.jpg" alt="">
+        {{-- <img src="./images/logo.jpg" alt=""> --}}
         <h4>facture</h4>
         <hr>
         <h4>

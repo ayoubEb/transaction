@@ -19,6 +19,9 @@ class FacturePaiementController extends Controller
      */
     public function index(Request $request)
     {
+        $facturesPaiements = FacturePaiement::select("id","facture_id","client_id","type_paiement","payer","reste","date_paiement")->get();
+        $paiementCheques = FacturePaiement::where("type_paiement","chèque")->get();
+        return view("paiements.facture",["facturePaiements"=>$facturesPaiements,"paiementCheques"=>$paiementCheques]);
 
     }
 
@@ -78,6 +81,7 @@ class FacturePaiementController extends Controller
             $facture->update([
                 "payer"=>$facture->payer + $request->payer,
                 "reste"=>$request->reste,
+                "etat_paiement"=>"avance",
             ]);
 
         }

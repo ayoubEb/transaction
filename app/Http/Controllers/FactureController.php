@@ -84,7 +84,7 @@ class FactureController extends Controller
      */
     public function store(Request $request)
     {
-        $customize_facture = CustomizeFacture::select("reference","numero","tva")->first();
+        $customize_facture = CustomizeFacture::select("reference","numero")->first();
         $count_facture = Facture::withTrashed()->count();
         $reference = strval($count_facture + $customize_facture->numero);
 
@@ -130,9 +130,6 @@ class FactureController extends Controller
 
             }
         }
-
-
-
         toast("L'enregistrement du facture effectuée","success");
         return redirect()->route("facture.index");
       }
@@ -149,8 +146,6 @@ class FactureController extends Controller
                 ->select("factures.id","clients.raison_sociale")
                 ->where("factures.id",$facture->id)
                 ->first();
-            // dd($client);
-
         $produits = Produit::select("id","reference","designation","prix_vente")->get();
         return view("ventes.factures.show",[
             "facture"=>$facture,
@@ -239,7 +234,7 @@ class FactureController extends Controller
     public function edit(Facture $facture,Request $request)
     {
 
-            $produits = Produit::select("id","reference","designation","prix_vente")->get();
+        $produits = Produit::select("id","reference","designation","prix_vente")->get();
         return view('ventes.factures.edit',
         [
           'facture'=>$facture,
@@ -262,7 +257,6 @@ class FactureController extends Controller
             $facture->update([
                 "client_id"=>$request->client_id,
                 "statut"=>$request->statut ?? "en cours",
-                "taux_tva"=>$request->tva,
             ]);
             toast("La modification du facture effectuée","success");
             if($facture->statut == "valider")

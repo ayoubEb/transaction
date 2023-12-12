@@ -198,12 +198,7 @@ Modifier la facture : {{ $facture->num_facture ?? '' }}
                             @method("PUT")
                             <div class="form-group mb-2">
                                 <label for="" class="form-label">Produits</label>
-                                {{-- <select name="produit_u" id="" class="form-select">
-                                    <option value="">Choisir le produit</option>
-                                    @foreach ($produits as $produit)
-                                        <option value="{{ $produit->id }}" {{ $facture_produit->produit_id == $produit->id ? "selected":"" }}> {{ $produit->reference }}</option>
-                                    @endforeach
-                                </select> --}}
+
                                 <input type="hidden" name="pro_id" id="" class="form-control" value="{{ $facture_produit->id }}">
                                 <input type="text" id="" class="form-control" disabled value="{{ $facture_produit->produit->designation }}">
                             </div>
@@ -402,13 +397,6 @@ Modifier la facture : {{ $facture->num_facture ?? '' }}
 @section('script')
     <script>
         $(document).ready(function(){
-
-            // let pro = $(".qteMulti").parent().parent().children("td").children("div").children(".pro");
-            // if(pro.not(':checked')){
-            //     $(".pro").parent().parent().children("td").children("div").children(".qteMulti")prop("disabled",true);
-            // }
-
-
             $(".pro").on("change",function(e)
             {
                 if($(this).is(':checked'))
@@ -502,80 +490,71 @@ Modifier la facture : {{ $facture->num_facture ?? '' }}
                 }
             })
 
+            $(".qte").on("keyup",function(e){
+                let qte = $(e.target).val();
+                let count_pro = $(".pro:checked").length;
+                let price = $(e.target).parent().parent().children("td").children(".price").val();
+                let remise = $(e.target).parent().parent().children("td").children(".remise").val();
+                let montant = parseFloat(qte * price).toFixed(2);
+                let montantRemise = parseFloat(montant * ( 1 - (remise/100))).toFixed(2);
+                let sum = 0;
+                let remise_facture = $("#RGroup").val();
+                let tva = $("#tva").val();
+                if(remise == 0){
+                    $(e.target).parent().parent().children("td").children(".montant").val(montant);
+                    $(".montant").each(function(){
+                        sum += +$(this).val();
+                    });
+                    let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+                        $("#new td:nth-child(1)").html(sum + " dh");
+                        $("#new td:nth-child(2)").html(count_pro);
+                        $("#htNew").val(sum);
+                }
+                else{
+                    $(e.target).parent().parent().children("td").children(".montant").val(montantRemise);
+                    $(".montant").each(function(){
+                        sum += +$(this).val();
+                    });
+                    let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+                        $("#new td:nth-child(1)").html(sum + " dh");
+                        $("#new td:nth-child(2)").html(count_pro);
+                        $("#htNew").val(sum);
+                }
+            })
 
 
 
-
-
-
-
-
-
-    $(".qte").on("keyup",function(e){
-        let qte = $(e.target).val();
-        let count_pro = $(".pro:checked").length;
-        let price = $(e.target).parent().parent().children("td").children(".price").val();
-        let remise = $(e.target).parent().parent().children("td").children(".remise").val();
-        let montant = parseFloat(qte * price).toFixed(2);
-        let montantRemise = parseFloat(montant * ( 1 - (remise/100))).toFixed(2);
-        let sum = 0;
-        let remise_facture = $("#RGroup").val();
-        let tva = $("#tva").val();
-        if(remise == 0){
-            $(e.target).parent().parent().children("td").children(".montant").val(montant);
-            $(".montant").each(function(){
-                sum += +$(this).val();
-            });
-            let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
-                $("#new td:nth-child(1)").html(sum + " dh");
-                $("#new td:nth-child(2)").html(count_pro);
-                $("#htNew").val(sum);
-        }
-        else{
-            $(e.target).parent().parent().children("td").children(".montant").val(montantRemise);
-            $(".montant").each(function(){
-                sum += +$(this).val();
-            });
-            let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
-                $("#new td:nth-child(1)").html(sum + " dh");
-                $("#new td:nth-child(2)").html(count_pro);
-                $("#htNew").val(sum);
-        }
-    })
-
-
-
-    $(".remise").on("keyup",function(e){
-        let remise = $(e.target).val();
-        let count_pro = $(".pro:checked").length;
-        let price = $(e.target).parent().parent().children("td").children(".price").val();
-        let qte = $(e.target).parent().parent().children("td").children(".qte").val();
-        let montant = parseFloat(qte * price).toFixed(2);
-        let montantRemise = parseFloat(montant * ( 1 - (remise/100))).toFixed(2);
-        let sum = 0;
-        let remise_facture = $("#RGroup").val();
-        let tva = $("#tva").val();
-        if(remise == 0){
-            $(e.target).parent().parent().children("td").children(".montant").val(montant);
-            $(".montant").each(function(){
-                sum += +$(this).val();
-            });
-            let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
-                $("#new td:nth-child(1)").html(sum + " dh");
-                $("#new td:nth-child(2)").html(count_pro);
-                $("#htNew").val(sum);
-        }
-        else{
-            $(e.target).parent().parent().children("td").children(".montant").val(montantRemise);
-            $(".montant").each(function(){
-                sum += +$(this).val();
-            });
-            let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
-                $("#new td:nth-child(1)").html(sum + " dh");
-                $("#new td:nth-child(2)").html(count_pro);
-                $("#htNew").val(sum);
-        }
-    })
+            $(".remise").on("keyup",function(e){
+                let remise = $(e.target).val();
+                let count_pro = $(".pro:checked").length;
+                let price = $(e.target).parent().parent().children("td").children(".price").val();
+                let qte = $(e.target).parent().parent().children("td").children(".qte").val();
+                let montant = parseFloat(qte * price).toFixed(2);
+                let montantRemise = parseFloat(montant * ( 1 - (remise/100))).toFixed(2);
+                let sum = 0;
+                let remise_facture = $("#RGroup").val();
+                let tva = $("#tva").val();
+                if(remise == 0){
+                    $(e.target).parent().parent().children("td").children(".montant").val(montant);
+                    $(".montant").each(function(){
+                        sum += +$(this).val();
+                    });
+                    let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+                        $("#new td:nth-child(1)").html(sum + " dh");
+                        $("#new td:nth-child(2)").html(count_pro);
+                        $("#htNew").val(sum);
+                }
+                else{
+                    $(e.target).parent().parent().children("td").children(".montant").val(montantRemise);
+                    $(".montant").each(function(){
+                        sum += +$(this).val();
+                    });
+                    let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
+                        $("#new td:nth-child(1)").html(sum + " dh");
+                        $("#new td:nth-child(2)").html(count_pro);
+                        $("#htNew").val(sum);
+                }
+            })
 
 
 

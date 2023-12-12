@@ -20,6 +20,15 @@ class FacturePaiement extends Model
     {
         return $this->belongsTo(Facture::class, 'facture_id');
     }
+    /**
+     * Get the user that owns the FacturePaiement
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class, 'client_id');
+    }
 
     /**
      * Get the cheque associated with the FacturePaiement

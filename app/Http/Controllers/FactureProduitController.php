@@ -76,15 +76,7 @@ class FactureProduitController extends Controller
 
 
         }
-        // let ttc = parseFloat((sum  + (sum * (tva/100))) * (1 - (remise_facture/100))).toFixed(2);
-
-        // $ht = $request->ht_new + $facture->prix_ht;
-        // $ttc = ($ht + ($ht * ($facture->taux_tva/100))) * (1 - ($facture->remise / 100));
-        // Facture::where("id",$request->facture_id)->update([
-        //     "prix_ttc"=>$ttc,
-        //     "prix_ht"=>$ht,
-        //     "reste"=>$ttc,
-        // ]);
+   
         toast("L'enregistrement des produits effectuée","success");
         return back();
 

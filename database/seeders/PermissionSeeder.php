@@ -14,16 +14,16 @@ class PermissionSeeder extends Seeder
     public function run()
     {
        $permissions=[
-   
 
 
-             'categorie-create','categorie-edit','categorie-list','categorie-show','categorie-destroy',
+
+        'categorie-create','categorie-edit','categorie-list','categorie-show','categorie-destroy',
         'sousCategorie-list','sousCategorie-create','sousCategorie-edit','sousCategorie-destroy',
         'caracteristique-list','caracteristique-create','caracteristique-edit','caracteristique-destroy',
         'stock-list','stock-create',"stock-show",'stock-destroy',
 
 
-        "customize-facture","customize-stock",
+        "customize-facture","customize-stock","customize-ligneAchat",
 
         'facturePaiement-create','facturePaiement-list','facturePaiement-destroy',
 
@@ -31,6 +31,7 @@ class PermissionSeeder extends Seeder
 
         'groupe-create','groupe-edit','groupe-list','groupe-destroy',
         'client-create','client-edit','client-list','client-show','client-destroy',
+        'fournisseur-create','fournisseur-edit','fournisseur-list','fournisseur-show','fournisseur-destroy',
         'produit-create','produit-edit','produit-list','produit-show','produit-destroy',
         'facture-create','facture-edit','facture-list','facture-show','facture-destroy',
         'user-create','user-edit','user-list','user-show','user-destroy',
@@ -41,6 +42,9 @@ class PermissionSeeder extends Seeder
         "typeClient-edit","typeClient-destroy","typeClient-create","typeClient-list",
 
         "avoire-list","avoire-create","avoire-edit","avoire-destroy","avoire-show",
+
+        "ligneAchat-list","ligneAchat-edit","ligneAchat-destroy","ligneAchat-show","ligneAchat-bon",
+        "achatPaiement-list","achatPaiement-create","achatPaiement-destroy"
 
 
         ];

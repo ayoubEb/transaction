@@ -34,7 +34,6 @@ class BankSeeder extends Seeder
             [ "nom_bank"=>"DAR EL AMANE" ],
             [ "nom_bank"=>"SOCIÉTÉ GÉNÉRALE MAROC" ],
             [ "nom_bank"=>"UMNIA BANK" ],
-            [ "nom_bank"=>"" ],
         ];
         Bank::insert($data);
     }

@@ -25,6 +25,10 @@
   left: 90%;
 }
 
+.pt-3px {
+  padding-top: 3px;
+}
+
 .fs-12 {
   font-size: 12px !important;
 }

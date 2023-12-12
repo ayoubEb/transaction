@@ -13,7 +13,7 @@
                     </span>
                 </a> --}}
 
-                <h6 class="logo logo-light fs-5 text-center text-white">
+                {{-- <h6 class="logo logo-light fs-5 text-center text-white">
                     <span class="logo-sm">
                         <img src="{{asset('assets/images/logo-sm.png')}}" alt="" width="100%" height="22">
 
@@ -21,7 +21,7 @@
                     <span class="logo-lg">
                         <img src="{{asset('assets/images/logo.png')}}" alt="" class="img-fluid p-2" height="24">
                     </span>
-                </h6>
+                </h6> --}}
             </div>
 
             <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">

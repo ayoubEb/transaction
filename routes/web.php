@@ -1,6 +1,8 @@
 <?php
 
-
+use App\Http\Controllers\AchatChequeController;
+use App\Http\Controllers\AchatController;
+use App\Http\Controllers\AchatPaiementController;
 use Illuminate\Support\Facades\Route;
 // use Spatie\Permission\Models\Permission;
 /*
@@ -22,12 +24,10 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AmountPurchaseController;
 use App\Http\Controllers\AmountSaleController;
-use App\Http\Controllers\AttributController;
-use App\Http\Controllers\BonCommandeController;
 use App\Http\Controllers\CaracteristiqueController;
+use App\Http\Controllers\CustomizeAchatController;
 use App\Http\Controllers\CustomizeController;
 use App\Http\Controllers\CustomizeFactureController;
 use App\Http\Controllers\CustomizeStockController;
@@ -37,7 +37,6 @@ use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\GetDataController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LigneAchatController;
-use App\Http\Controllers\LigneBonCommandeController;
 use App\Http\Controllers\LigneFactureRetourController;
 use App\Http\Controllers\ProduitCaracteristiqueController;
 use App\Http\Controllers\ProduitCategorieController;
@@ -82,6 +81,11 @@ Route::group(['middleware' => ['auth']], function() {
         "stockHistorique"=>StockHistoriqueController::class,
         "factureRetour"=>FactureRetourController::class,
         "ligneFactureRetour"=>LigneFactureRetourController::class,
+        "ligneAchat"=>LigneAchatController::class,
+        "achat"=>AchatController::class,
+        "achatPaiement"=>AchatPaiementController::class,
+        "achatCheque"=>AchatChequeController::class,
+        "customizeAchat"=>CustomizeAchatController::class,
 
     ]);
 
@@ -117,9 +121,12 @@ Route::controller(ProfilController::class)->group(function(){
 
 Route::controller(FactureController::class)->group(function(){
     Route::put('/facture-valider/{facture}','valider')->name("facture.valider");
-    Route::get('/facture-produits/{facture}','produits')->name("facture.produit");
-    Route::get("/search-produits",'search_produitAdd')->name('searchProduit');
-    Route::put("/update-multiple/{facture}",'update_multiple')->name('fp.multiple');
+    // Route::get('/facture-produits/{facture}','produits')->name("facture.produit");
+    // Route::get("/search-produits",'search_produitAdd')->name('searchProduit');
+    // Route::put("/update-multiple/{facture}",'update_multiple')->name('fp.multiple');
+});
+Route::controller(LigneAchatController::class)->group(function(){
+    Route::put('/achat-valider/{ligneAchat}','valider')->name("ligneAchat.valider");
 });
 
 
@@ -131,6 +138,10 @@ Route::controller(FacturePaiementController::class)->group(function(){
 });
 Route::controller(ProduitController::class)->group(function(){
     Route::post('/produit-rapidement/create','produitRapidement')->name("produit.rapidement");
+});
+Route::controller(LigneAchatController::class)->group(function(){
+    Route::get('/bonCommande/{ligneAchat}','bon')->name("ligneAchat.bon");
+    Route::get('/liste/bonCommande','liste_bon')->name("bon.liste");
 });
 
 

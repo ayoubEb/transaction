@@ -16,7 +16,7 @@ class RoleController extends Controller
      */
     function __construct()
     {
-         $this->middleware('permission:role-list|role-create|role-edit|role-destroy', ['only' => ['index']]);
+         $this->middleware('permission:role-list|role-create|role-edit|role-destroy|role-show', ['only' => ['index']]);
          $this->middleware('permission:role-create', ['only' => ['create','store']]);
          $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:role-destroy', ['only' => ['destroy']]);
@@ -30,7 +30,7 @@ class RoleController extends Controller
     public function index(Request $request)
     {
 
-        return view('roles.index')->with([
+        return view('grh.roles.index')->with([
            'roles'=>Role::all()
             ]);
     }
@@ -61,10 +61,13 @@ class RoleController extends Controller
         $facture_paiements  = Permission::where("name","like","facturePaiement-%")->get();
         $stock_historiques  = Permission::where("name","like","stockHistory-%")->get();
         $avoires            = Permission::where("name","like","avoire-%")->get();
+        $ligne_achats       = Permission::where("name","like","ligneAchat-%")->get();
+        $achat_paiements    = Permission::where("name","like","achatPaiement-%")->get();
+        $fournisseurs    = Permission::where("name","like","fournisseur-%")->get();
 
 
 
-        return view('roles.create',
+        return view('grh.roles.create',
             [
                 "permission"=>$permission,
                 "categories"=>$categories,
@@ -85,6 +88,9 @@ class RoleController extends Controller
                 "facture_paiements"=>$facture_paiements,
                 "stock_historiques"=>$stock_historiques,
                 "avoires"=>$avoires,
+                "ligne_achats"=>$ligne_achats,
+                "achat_paiements"=>$achat_paiements,
+                "fournisseurs"=>$fournisseurs,
             ]
         );
     }
@@ -126,7 +132,7 @@ class RoleController extends Controller
             ->where("role_has_permissions.role_id",$id)
             ->get();
 
-        return view('roles.show',compact('role','rolePermissions'));
+        return view('grh.roles.show',compact('role','rolePermissions'));
     }
 
     /**
@@ -160,13 +166,16 @@ class RoleController extends Controller
         $facture_paiements  = Permission::where("name","like","facturePaiement-%")->get();
         $stock_historiques  = Permission::where("name","like","stockHistory-%")->get();
         $avoires            = Permission::where("name","like","avoire-%")->get();
+        $ligne_achats       = Permission::where("name","like","ligneAchat-%")->get();
+        $achat_paiements    = Permission::where("name","like","achatPaiement-%")->get();
+        $fournisseurs    = Permission::where("name","like","fournisseur-%")->get();
 
         $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id",$id)
             ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
             ->all();
 
         // dd($rolePermissions);
-        return view('roles.edit',[
+        return view('grh.roles.edit',[
             "role"=>$role,
             "rolePermissions"=>$rolePermissions,
             "categories"=>$categories,
@@ -187,6 +196,9 @@ class RoleController extends Controller
             "facture_paiements"=>$facture_paiements,
             "stock_historiques"=>$stock_historiques,
             "avoires"=>$avoires,
+            "ligne_achats"=>$ligne_achats,
+            "achat_paiements"=>$achat_paiements,
+            "fournisseurs"=>$fournisseurs,
         ]);
     }
 
@@ -201,17 +213,18 @@ class RoleController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'permission' => 'required',
+            'permission_u' => 'required',
         ]);
 
         $role = Role::find($id);
         $role->name = $request->input('name');
         $role->save();
 
-        $role->syncPermissions($request->input('permission'));
+        $role->syncPermissions($request->input('permission_u'));
 
-        return redirect()->route('roles.index')
-                        ->with('success','Role updated successfully');
+        toast("La ntofication d'autprisation effectuée","success");
+
+        return redirect()->route('role.index');
     }
     /**
      * Remove the specified resource from storage.

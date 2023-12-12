@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CustomizeAchat;
 use App\Models\CustomizeFacture;
 use App\Models\CustomizeFactureRetour;
 use App\Models\CustomizeStock;
@@ -17,6 +18,11 @@ class CustomizeSeeder extends Seeder
     public function run()
     {
         CustomizeFacture::create([
+            "reference"=>"FAC-00",
+            "numero"=>1,
+            "tva"=>20,
+        ]);
+        CustomizeAchat::create([
             "reference"=>"FAC-00",
             "numero"=>1,
             "tva"=>20,

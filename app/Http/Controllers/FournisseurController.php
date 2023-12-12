@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class FournisseurController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:fournisseur-list|fournisseur-create|fournisseur-edit|fournisseur-destroy', ['only' => ['index','show']]);
+         $this->middleware('permission:fournisseur-create', ['only' => ['create','store']]);
+         $this->middleware('permission:fournisseur-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:fournisseur-destroy', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +23,7 @@ class FournisseurController extends Controller
     {
         $fournisseurs = Fournisseur::select("id","raison_sociale",'email','ice','rc','phone','fix','adresse','ville','code_postal','pays')->get();
 
-        return view("achats.fournisseur",
+        return view("crm.fournisseur",
             [
                 "fournisseurs"=>$fournisseurs,
             ]

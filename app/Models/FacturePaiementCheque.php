@@ -24,7 +24,7 @@ class FacturePaiementCheque extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function bancaire(): BelongsTo
+    public function bank(): BelongsTo
     {
         return $this->belongsTo(Bank::class, 'bank_id');
     }

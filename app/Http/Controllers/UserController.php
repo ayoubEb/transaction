@@ -21,7 +21,7 @@ class UserController extends Controller
     public function index(){
         $users = User::select("id","email","username","role","statut","name")->where("id",'<>',Auth::user()->id)->get();
         $roles = Role::pluck('name','name')->all();
-        return view("users",[
+        return view("grh.users",[
             'users'=> $users,
             "roles"=>$roles
         ]);
