@@ -17,7 +17,7 @@ class EntrepriseController extends Controller
     {
         $entreprise = Entreprise::first();
         $entreprise_existe  = Entreprise::exists();
-        return  view('entreprises',
+        return  view('parametre.entreprises',
       [
         'entreprise'=>$entreprise,
         "entreprise_existe"=>$entreprise_existe,
